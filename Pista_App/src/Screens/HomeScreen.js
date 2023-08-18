@@ -24,7 +24,7 @@ function HomeScreen() {
         TAFEL
       </button>
       <button onClick={() => handleOpenClick()}>
-        ORDERS
+        ORDERSLIST
       </button>
     </div>
   );
