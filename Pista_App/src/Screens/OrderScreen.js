@@ -64,8 +64,6 @@ function OrderScreen() {
       };
       setOrderlines((prevOrderlines) => [...prevOrderlines, newOrderLine]);
     }
-
-    console.log(orderlines)
   };
 
 
@@ -98,8 +96,53 @@ function OrderScreen() {
 
   const handleGeefDoor = () => {
     history.push("/");
-    console.log(orderlines);
+
+    const now = new Date();
+    const currentTimestamp = now.toISOString().replace('T', ' ').substr(0, 19);
+
+    console.log(currentTimestamp)
+
+    const newOrder = {
+      tafel_id: id, 
+      creation: currentTimestamp,
+      modification: currentTimestamp
+    }
+    
+    uploadOrder(newOrder)
+
+    uploadOrderLines()
   }; 
+
+  const uploadOrder = async (order) => {
+    console.log(order)
+
+      try {
+       // Send the product data to the server
+       const response = await fetch("http://localhost:5000/api/orders", {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json"
+         },
+         body: JSON.stringify(order)
+       });
+
+       if (response.ok) {
+         // Product was successfully created
+         // Navigate to a different route (e.g., a success page)
+         history.push("/");
+       } else {
+         // Handle error response
+         console.error("Failed to create product:", response.statusText);
+       }
+     } catch (error) {
+       // Handle network or other errors
+       console.error("An error occurred:", error);
+     }
+  };
+
+  const uploadOrderLines = async () => {
+    console.log(orderlines)
+  }
 
   // Split products into two arrays based on "soort"
   const foodProducts = products.filter((product) => product.soort === "eten");

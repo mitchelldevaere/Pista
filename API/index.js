@@ -8,15 +8,17 @@ const app = express();
 const port = 5000;
 
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  origin: "http://192.168.10.195:3000", // Replace with your frontend's URL
+}));
 
 // Create a MariaDB pool
 const pool = mariadb.createPool({
-  host: "localhost",
+  host: "192.168.10.195",
   user: "root",
   password: "Azerty-123",
   database: "Pista",
-  connectionLimit: 5, // adjust as needed
+  connectionLimit: 400, // adjust as needed
 });
 
 app.get("/api/sauzen", async (req, res) => {
@@ -178,6 +180,26 @@ app.put("/api/producten/:id", async (req, res) => {
   }
 });
 
+app.post("/api/orders", async (req, res) => {
+  const { tafel_id, creation, modification } = req.body;
+
+  try {
+    if (!tafel_id || !creation || !modification) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const conn = await pool.getConnection();
+
+    // Insert the new order into the database
+    await conn.query("INSERT INTO `order` (tafel_id, creation, modification) VALUES (?, ?, ?)", [tafel_id, creation, modification]);
+
+    conn.release();
+    res.status(201).json({ message: "Order created successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
 
 // Start the server
 app.listen(port, () => {
