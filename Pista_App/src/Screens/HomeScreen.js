@@ -24,7 +24,7 @@ function HomeScreen() {
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
 
   useEffect(() => {
-    history.replace("/");
+    history.push("/");
     // Retrieve data from localStorage
     const localStorageData = localStorage.getItem("orderData");
     if (localStorageData) {

@@ -1,8 +1,6 @@
-// EditScreen.js
-
 import React, { useState } from "react";
-
-import { useParams, useHistory } from "react-router-dom";
+import {  useHistory } from "react-router-dom";
+import "../styles/editScreen.css";
 
 function EditScreen({ location }) {
   
@@ -26,6 +24,24 @@ function EditScreen({ location }) {
       setOrderlines(updatedOrderlines);
     }
   };
+
+  const deleteProduct = (index) => {
+    const updatedOrderlines = [...orderlines];
+    updatedOrderlines.splice(index, 1);
+    setOrderlines(updatedOrderlines);
+  };
+
+  const calculateTotalPrice = (orderlines) => {
+    console.log(orderlines)
+    let totalPrice = 0;
+    
+    orderlines.forEach(orderline => {
+      const linePrice = orderline.prijs * orderline.hoeveelheid;
+      totalPrice += linePrice;
+    });
+  
+    return totalPrice
+  }
 
   const handleGeefDoor = () => {
     if (orderlinesProp.length !== 0) {
@@ -127,25 +143,40 @@ function EditScreen({ location }) {
     }
   };
 
+  const handleReturnToOrderScreen = () => {
+    history.push(`/order/${id}`, { orderlines });
+  };
+
   return (
-    <div>
-      <h1>Edit Screen</h1>
-      {/* Display or edit orderlines as needed */}
-      <ul>
-        {orderlines.map((orderline, index) => (
-          <li key={orderline.id}>
-            {orderline.naam} - {orderline.hoeveelheid} stuks
-            <button onClick={() => increaseQuantity(index)}>Increase</button>
-            <button onClick={() => decreaseQuantity(index)}>Decrease</button>
-          </li>
-        ))}
-      </ul>
-      <div>
-      <button className="geef-door-button-order" onClick={handleGeefDoor}>
-        </button>
+    <div className="edit-container">
+      <div className="edit-header">
+        <h1 className="edit-title">Controleer je bestelling</h1>
+        <button className="edit-back-button" onClick={() => handleReturnToOrderScreen()}>Bestel nog iets extra</button>
+      </div>
+      <div className="edit-content">
+        <div className="edit-price">
+          <h2>{calculateTotalPrice(orderlines) * 2} vakjes</h2>
+        </div>
+        <div className="edit-orders">
+          {orderlines.map((orderline, index) => (
+            <div key={orderline.id} className="edit-ordered-item">
+              <div className="edit-item-info">
+                {orderline.naam} {orderline.saus === "/" ? null : `- ${orderline.saus}`} - {orderline.hoeveelheid} {orderline.hoeveelheid === 1 ? "stuk" : "stuks"}
+              </div>
+              <div className="edit-item-quantity">
+                <button className="edit-quantity-button" onClick={() => decreaseQuantity(index)}>-</button>
+                <button className="edit-quantity-button" onClick={() => increaseQuantity(index)}>+</button>
+                <button className="edit-delete-button" onClick={() => deleteProduct(index)}>Verwijder</button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div>
+          <button className="edit-geef-door-button" onClick={handleGeefDoor}>Geef Door</button>
+        </div>
       </div>
     </div>
-  );
+  );  
 }
 
 export default EditScreen;

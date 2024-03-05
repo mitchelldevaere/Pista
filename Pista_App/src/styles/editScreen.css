@@ -1,0 +1,118 @@
+/* EditScreen.css */
+
+.edit-container {
+    font-family: Arial, sans-serif;
+    margin: 0 auto;
+  }
+  
+  .edit-header {
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0b5229;
+    padding: 10px;
+    width: 100%;
+    margin: 0;
+  }
+
+  .edit-price {
+    text-align: center;
+  }
+
+  .edit-orders {
+    border: 2px solid #0b5229;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  .edit-orders:last-child {
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
+  .edit-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid white;
+    margin-bottom: 7px;
+    padding-bottom: 5px;
+  }
+  
+  .edit-title {
+    font-size: 24px;
+    color: #fff;
+    margin: 0;
+    flex: 1;
+  }
+  
+  .edit-back-button {
+    background-color: #fffd8d;
+    color: #0b5229;
+    border: none;
+    padding: 7px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-weight: bold;
+  }
+  
+  .edit-content {
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+  }
+  
+  .edit-ordered-item {
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-bottom: 1px solid #0b5229;
+  }
+  
+  .edit-ordered-item ul {
+    padding-left: 0;
+    list-style: none;
+  }
+  
+  .edit-item-info {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  .edit-item-quantity {
+    margin-left: auto;
+  }
+  
+  .edit-quantity-button {
+    background-color: #0b5229;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-left: 5px;
+  }
+  
+  .edit-delete-button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-left: 5px;
+  }
+  
+  .edit-geef-door-button {
+    background-color: #0b5229;
+    color: #fffd8d;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 3px;
+    width: 100%;
+  }
+  

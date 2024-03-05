@@ -59,6 +59,13 @@ function OrderScreen() {
     39: image11,
   });
 
+  useEffect(() => {
+    const locationState = history.location.state;
+    if (locationState && locationState.orderlines) {
+      setOrderlines(locationState.orderlines);
+    }
+  }, [history.location.state]);
+
 
   useEffect(() => {
     fetchData();
