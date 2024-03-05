@@ -21,7 +21,7 @@ function App () {
         <Route path="/updateProduct/:productId" component={UpdateProduct} />
         <Route path="/order/:id" component={OrderScreen} />
         <Route path="/tafel/:id" component={TafelDetailScreen} />
-        <Route path="/orders" component={OrdersScreen} />
+        <Route path="/appeltaart" component={OrdersScreen} />
         <Route path="/succes" component={SuccesScreen} />
         <Route path="/edit" component={EditScreen} />
       </Switch>
