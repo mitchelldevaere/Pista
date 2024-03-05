@@ -1,5 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
+import "../styles/orderScreen.css"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+
+import ImagePopup from "../Util/Popup";
+
+import image1 from "../images/burger.jpg";
+import image2 from "../images/veggie.jpg";
+import image3 from "../images/pasta.jpg";
+import image4 from "../images/frietjes.jpg";
+import image5 from "../images/tapasbord.jpg";
+import image6 from "../images/aperomix.jpg";
+import image7 from "../images/croque.jpg";
+import image8 from "../images/pannenkoek.jpg";
+import image9 from "../images/ijs.jpeg";
+import image10 from "../images/chips.jpeg";
+import image11 from "../images/aardbei.jpg";
 
 function OrderScreen() {
   const history = useHistory();
@@ -14,6 +31,7 @@ function OrderScreen() {
   const [drinkQuantity, setDrinkQuantity] = useState(0);
   const [foodQuantity, setFoodQuantity] = useState(0);
 
+  const [showHomeButton, setShowHomeButton] = useState(false);
 
   const [selectedSauces, setSelectedSauces] = useState({});
 
@@ -26,16 +44,43 @@ function OrderScreen() {
     cocktail: true,
   });
 
+  const [selectedFoodItemId, setSelectedFoodItemId] = useState(null);
+  const [foodImages] = useState({
+    1: image1,
+    2: image2,
+    3: image3,
+    4: image4,
+    5: image5,
+    6: image6,
+    7: image7,
+    8: image8,
+    9: image9,
+    10: image10,
+    39: image11,
+  });
+
 
   useEffect(() => {
     fetchData();
+    checkTafelIdInLocalStorage()
   }, []);
+
+  const checkTafelIdInLocalStorage = () => {
+    const localStorageData = localStorage.getItem("orderData");
+    if (localStorageData) {
+      const parsedData = JSON.parse(localStorageData);
+      if (parsedData.tafel_id !== null) {
+        // tafel_id is not null, so show the home button
+        setShowHomeButton(true);
+      }
+    }
+  };
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`http://192.168.11.236:3000/api/producten`);
+      const response = await fetch(`https://lapista.depistezulte.be/api/producten`);
       const data = await response.json();
-      const products= data.map((product) => ({
+      const products = data.map((product) => ({
         ...product,
         selectedSaus: ""
       }));
@@ -45,17 +90,17 @@ function OrderScreen() {
     }
 
     try {
-      const sauceResponse = await fetch(`http://192.168.11.236:3000/api/sauzen`);
+      const sauceResponse = await fetch(`https://lapista.depistezulte.be/api/sauzen`);
       const sauceData = await sauceResponse.json();
       setSauces(sauceData); // Store sauce data in a state variable
     } catch (error) {
-        console.error("Error fetching data:", error);
+      console.error("Error fetching data:", error);
     }
   };
 
   const increaseDrinks = (productId) => {
     const productToUpdate = products.find((product) => product.id === productId);
-  
+
     // Check if an order line with the same product ID and name exists
     const existingOrderLineIndex = orderlines.findIndex(
       (orderline) =>
@@ -85,10 +130,10 @@ function OrderScreen() {
 
   const showDropDown = (productId) => {
     const productToUpdate = products.find((product) => product.id === productId);
-  
+
     setSelectedSauces((prevSelectedSauces) => {
       const newSelectedSauces = { ...prevSelectedSauces };
-  
+
       // If the dropdown is already visible, hide it
       if (newSelectedSauces[productId] === productToUpdate.sauzen[0].saus) {
         delete newSelectedSauces[productId];
@@ -96,7 +141,7 @@ function OrderScreen() {
         // Show the dropdown for the clicked product
         newSelectedSauces[productId] = productToUpdate.sauzen[0].saus; // Set default sauce
       }
-  
+
       return newSelectedSauces;
     });
   };
@@ -106,11 +151,15 @@ function OrderScreen() {
       ...prevSelectedSauces,
       [productId]: selectedSauce,
     }));
+  
+    // Automatically add the item to orderlines when sauce is selected
+    if (selectedSauce !== "") {
+      increaseFood(productId, selectedSauce);
+    }
   };
+  
 
-  const increaseFood = (productId) => {
-    const selectedSauce = selectedSauces[productId];
-
+  const increaseFood = (productId, selectedSauce) => {
     if (selectedSauce) {
       const productToUpdate = products.find((product) => product.id === productId);
       const existingOrderLineIndex = orderlines.findIndex(
@@ -132,6 +181,7 @@ function OrderScreen() {
           prijs: productToUpdate.prijs,
           hoeveelheid: 1,
           saus: selectedSauce,
+          status: 0
         };
         setOrderlines((prevOrderlines) => [...prevOrderlines, newOrderLine]);
       }
@@ -146,139 +196,54 @@ function OrderScreen() {
   const decrease = (orderlineIndex) => {
     const updatedOrderlines = [...orderlines];
     const orderlineToUpdate = updatedOrderlines[orderlineIndex];
-  
+
     if (orderlineToUpdate.hoeveelheid > 1) {
       orderlineToUpdate.hoeveelheid -= 1;
     } else {
       updatedOrderlines.splice(orderlineIndex, 1); // Remove the orderline if quantity is 1
     }
-  
+
     setOrderlines(updatedOrderlines);
   };
-  
 
   useEffect(() => {
     const newTotal = orderlines.reduce((acc, orderline) => {
       const sauce = sauces.find((sauce) => sauce.saus === orderline.saus);
       const saucePrice = sauce ? sauce.prijs : 0;
-  
+
       return acc + (orderline.hoeveelheid * orderline.prijs) + (orderline.hoeveelheid * saucePrice);
     }, 0);
-  
+
     const newDrinkQuantity = orderlines.reduce((acc, orderline) => {
       if (orderline.saus === "/") {
         return acc + orderline.hoeveelheid;
       }
       return acc;
     }, 0);
-  
+
     const newFoodQuantity = orderlines.reduce((acc, orderline) => {
       if (orderline.saus !== "/") {
         return acc + orderline.hoeveelheid;
       }
       return acc;
     }, 0);
-  
+
     setTotal(newTotal);
     setDrinkQuantity(newDrinkQuantity);
     setFoodQuantity(newFoodQuantity);
   }, [orderlines, sauces]);
-  
-
-
 
   const handleGeefDoor = () => {
-    if(orderlines.length !== 0){
-      history.push("/");
-
-      const now = new Date();
-      const currentTimestamp = now.toISOString().replace('T', ' ').substr(0, 19);
-
-      console.log(currentTimestamp)
-
-      const newOrder = {
-        tafel_id: id, 
-        creation: currentTimestamp,
-        modification: currentTimestamp,
-        status: 0
-      }
-    
-    postOrder(newOrder)
+    if (orderlines.length !== 0) {
+      history.push({
+        pathname: "/edit",
+        state: { orderlines, id },  // Pass orderlines as part of the state
+      });
     } else {
-      window.alert("kies een item")
+      window.alert("Kies eerst een product dat je wil bestellen!");
     }
-  }; 
-
-  const postOrder = async (order) => {
-      try {
-       // Send the product data to the server
-       const response = await fetch("http://192.168.11.236:3000/api/orders", {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json"
-         },
-         body: JSON.stringify(order)
-       });
-
-       if (response.ok) {
-         // Product was successfully created
-         uploadOrderLines()
-         history.push("/");
-       } else {
-         // Handle error response
-         console.error("Failed to create product:", response.statusText);
-       }
-     } catch (error) {
-       // Handle network or other errors
-       console.error("An error occurred:", error);
-     }
   };
-
-  const uploadOrderLines = async () => {
-    try {
-      const response = await fetch(`http://192.168.11.236:3000/api/orders/${id}`);
-      const data = await response.json();
-      console.log(data)
-      postOrderlines(data)
-    } catch (error) {
-      console.error("Error fetching order:", error);
-    }
-  }
-
-  const postOrderlines = async (order) => {
-    console.log(order)
-
-    try {
-      for (const orderline of orderlines) {
-        const newOrderLine = {
-          order_id: order.id,
-          product_id: orderline.product_id,
-          naam: orderline.naam,
-          prijs: orderline.prijs,
-          hoeveelheid: orderline.hoeveelheid,
-          saus: orderline.saus
-        };
-
-        console.log(newOrderLine)
-
-        const response = await fetch("http://192.168.11.236:3000/api/orderlijnen", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newOrderLine),
-        });
-
-        if (!response.ok) {
-          console.error("Failed to create order line:", response.statusText);
-        }
-      }
-      console.log("Order lines uploaded successfully!");
-    } catch (error) {
-      console.error("An error occurred while uploading order lines:", error);
-    }
-  }
-
+  
   const toggleCollapse = (category) => {
     setCollapsedCategories((prevState) => ({
       ...Object.keys(prevState).reduce((acc, curr) => {
@@ -287,9 +252,19 @@ function OrderScreen() {
       }, {})
     }));
   };
-  
 
-  // Split products into two arrays based on "soort"
+  const navigateBack = () => {
+    history.push("/")
+  }
+
+  const openImagePopup = (productId) => {
+    setSelectedFoodItemId(productId);
+  };
+
+  const closeImagePopup = () => {
+    setSelectedFoodItemId(null);
+  };
+
   const foodProducts = products.filter((product) => product.soort === "eten");
   const frisdrankProducts = products.filter((product) => product.soort === "frisdrank");
   const bierProducts = products.filter((product) => product.soort === "bier");
@@ -297,131 +272,279 @@ function OrderScreen() {
   const champagneProducts = products.filter((product) => product.soort === "champagne");
   const cocktailProducts = products.filter((product) => product.soort === "cocktail");
 
+  const hasDrinks = orderlines.some((orderline) => orderline.saus === "/");
+  const hasFoods = orderlines.some((orderline) => orderline.saus !== "/");
+
   return (
-    <div>
-      <h1>Tafel {id}</h1>
-        <div>
-          <div>
-          <h2 onClick={() => toggleCollapse('food')}>Eten</h2>
-          {!collapsedCategories.food && (
-            <ul>
-              {foodProducts.map((product) => (
-                <li key={product.id}>
-                  <p>
-                    {product.naam} - {product.prijs}€{" "}
-                    <button onClick={() => showDropDown(product.id)}>+</button>{" "}
-                    {selectedSauces[product.id] && (
-                      <React.Fragment>
-                        <select
-                          value={selectedSauces[product.id]}
-                          onChange={(event) => handleSauceChange(product.id, event.target.value)}
-                        >
-                          {product.sauzen.map((saus) => (
-                            <option key={saus.id} value={saus.saus}>
-                              {saus.saus}
-                            </option>
-                          ))}
-                        </select>{" "}
-                        <button onClick={() => increaseFood(product.id)}>Voeg toe</button>
-                      </React.Fragment>
-                    )}
-                  </p>
-                </li>
-              ))}
-            </ul>
+    <div className="order-container">
+
+      <header className="header">
+
+        <div className="header-info">
+          <h2 className="title">MenuKaart</h2>
+          {showHomeButton && (
+            <button className="back-button-order" onClick={navigateBack}>
+              Home
+            </button>
           )}
         </div>
+
         <div>
-        <h2 onClick={() => toggleCollapse('frisdrank')}>Frisdrank</h2>
-        {!collapsedCategories.frisdrank && (
-          <ul>
-            {frisdrankProducts.map((product) => (
-              <li key={product.id}>
-                <p>
-                {product.naam} - {product.prijs}{"€ "}
-                  <button onClick={() => increaseDrinks(product.id)}>+</button>{"   "}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
+          <div className="table-info">
+            <p className="table-id">Tafel {id}</p>
+            <p>Totaal: {total.toFixed(2)}€ - # dranken: {drinkQuantity} - # eten: {foodQuantity}</p>
+          </div>
         </div>
-        <div>
-        <h2 onClick={() => toggleCollapse('bier')}>Bier</h2>
-        {!collapsedCategories.bier && (
-          <ul>
-            {bierProducts.map((product) => (
-              <li key={product.id}>
-                <p>
-                {product.naam} - {product.prijs}{"€ "}
-                  <button onClick={() => increaseDrinks(product.id)}>+</button>{"   "}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
+
+      </header>
+
+      <div className="content-body-order">
+
+        <div className="all-order-items">
+
+          <div className="ordered-items">
+            <h2>Bestelde dranken</h2>
+            {hasDrinks ? (
+              <ul className="collapsible-items">
+                {orderlines.map((orderline, index) => (
+                  orderline.saus === "/" && (
+                    <li key={orderline.id} className="product-item">
+                      <div className="product-info">
+                        <p>{orderline.naam}</p>
+                      </div>
+                      <div className="product-price">
+                        <p>{orderline.hoeveelheid} stuks</p>
+                      </div>
+                      <div className="buttons">
+                        <button className="decrease-button" onClick={() => decrease(index)}>
+                          -
+                        </button>
+                      </div>
+                    </li>
+                  )
+                ))}
+              </ul>
+            ) : (
+              <p>Bestel hieronder</p>
+            )}
+          </div>
+
+          <div className="ordered-items">
+            <h2>Bestelde gerechten</h2>
+            {hasFoods ? (
+              <ul className="collapsible-items">
+                {orderlines.map((orderline, index) => (
+                  orderline.saus !== "/" && (
+                    <li key={orderline.id} className="product-item">
+                      <div className="product-info">
+                        <p>{orderline.naam} - {orderline.saus}</p>
+                      </div>
+                      <div className="product-price">
+                        <p>{orderline.hoeveelheid} stuks</p>
+                      </div>
+                      <div className="buttons">
+                        <button className="decrease-button" onClick={() => decrease(index)}>
+                          -
+                        </button>
+                      </div>
+                    </li>
+                  )
+                ))}
+              </ul>
+            ) : (
+              <p>Bestel hieronder</p>
+            )}
+          </div>
+          
         </div>
-        <div>
-        <h2 onClick={() => toggleCollapse('wijn')}>Wijn</h2>
-        {!collapsedCategories.wijn && (
-          <ul>
-            {wijnProducts.map((product) => (
-              <li key={product.id}>
-                <p>
-                {product.naam} - {product.prijs}{"€ "}
-                  <button onClick={() => increaseDrinks(product.id)}>+</button>{"   "}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
+
+        <button className="geef-door-button-order" onClick={handleGeefDoor}>
+          {(hasFoods === false && hasDrinks === false) ? "Maak uw keuze" : "Geef uw bestelling door"}
+        </button>
+
+
+        <div className="collapsibles">
+
+          <div className="collapsible">
+            <h2 onClick={() => toggleCollapse('frisdrank')}>
+              Frisdrank
+              <FontAwesomeIcon icon={collapsedCategories.frisdrank ? faAngleDown : faAngleUp} />
+            </h2>
+            {!collapsedCategories.frisdrank && (
+              <ul className="collapsible-items">
+                {frisdrankProducts.map((product) => (
+                  <li key={product.id} className="product-item">
+                    <div className="product-info">
+                      <p>{product.naam}</p>
+                    </div>
+                    <div className="product-price">
+                      <p>{product.prijs}€</p>
+                    </div>
+                    <div className="buttons">
+                      <button className="add-button" onClick={() => increaseDrinks(product.id)}>+</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="collapsible">
+            <h2 onClick={() => toggleCollapse('bier')}>
+              Bier
+              <FontAwesomeIcon icon={collapsedCategories.bier ? faAngleDown : faAngleUp} />
+            </h2>
+            {!collapsedCategories.bier && (
+              <ul className="collapsible-items">
+                {bierProducts.map((product) => (
+                  <li key={product.id} className="product-item">
+                    <div className="product-info">
+                      <p>{product.naam}</p>
+                    </div>
+                    <div className="product-price">
+                      <p>{product.prijs}€</p>
+                    </div>
+                    <div className="buttons">
+                      <button className="add-button" onClick={() => increaseDrinks(product.id)}>+</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="collapsible">
+            <h2 onClick={() => toggleCollapse('wijn')}>
+              Wijn
+              <FontAwesomeIcon icon={collapsedCategories.wijn ? faAngleDown : faAngleUp} />
+            </h2>
+            {!collapsedCategories.wijn && (
+              <ul className="collapsible-items">
+                {wijnProducts.map((product) => (
+                  <li key={product.id} className="product-item">
+                    <div className="product-info">
+                      <p>{product.naam}</p>
+                    </div>
+                    <div className="product-price">
+                      <p>{product.prijs}€</p>
+                    </div>
+                    <div className="buttons">
+                      <button className="add-button" onClick={() => increaseDrinks(product.id)}>+</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="collapsible">
+            <h2 onClick={() => toggleCollapse('champagne')}>
+              Champagne
+              <FontAwesomeIcon icon={collapsedCategories.champagne ? faAngleDown : faAngleUp} />
+            </h2>
+            {!collapsedCategories.champagne && (
+              <ul className="collapsible-items">
+                {champagneProducts.map((product) => (
+                  <li key={product.id} className="product-item">
+                    <div className="product-info">
+                      <p>{product.naam}</p>
+                    </div>
+                    <div className="product-price">
+                      <p>{product.prijs}€</p>
+                    </div>
+                    <div className="buttons">
+                      <button className="add-button" onClick={() => increaseDrinks(product.id)}>+</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="collapsible">
+            <h2 onClick={() => toggleCollapse('cocktail')}>
+              Cocktail
+              <FontAwesomeIcon icon={collapsedCategories.cocktail ? faAngleDown : faAngleUp} />
+            </h2>
+            {!collapsedCategories.cocktail && (
+              <ul className="collapsible-items">
+                {cocktailProducts.map((product) => (
+                  <li key={product.id} className="product-item">
+                    <div className="product-info">
+                      <p>{product.naam}</p>
+                    </div>
+                    <div className="product-price">
+                      <p>{product.prijs}€</p>
+                    </div>
+                    <div className="buttons">
+                      <button className="add-button" onClick={() => increaseDrinks(product.id)}>+</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="collapsible">
+            <h2 onClick={() => toggleCollapse('food')}>
+              Eten
+              <FontAwesomeIcon icon={collapsedCategories.food ? faAngleDown : faAngleUp} />
+            </h2>
+            {!collapsedCategories.food && (
+              <ul className="collapsible-items">
+                {foodProducts.map((product) => (
+                  <li key={product.id} className="product-item">
+                    <div className="image-button">
+                      <button onClick={() => openImagePopup(product.id)}>Foto</button>
+                    </div>
+                    <div className="product-info">
+                      <p>{product.naam}</p>
+                    </div>
+                    <div className="product-price">
+                      <p>{product.prijs}€</p>
+                    </div>
+                    <div className="buttons">
+                      <button className="add-button" onClick={() => showDropDown(product.id)}>
+                        {selectedSauces[product.id] ? "-" : "+"}
+                      </button>
+                      {selectedSauces[product.id] && (
+                        <React.Fragment>
+                          <select
+                            value={selectedSauces[0]}
+                            onChange={(event) => {
+                              const selectedValue = event.target.value;
+                              // Check if the selected value is not "Kies een saus"
+                              if (selectedValue !== "Kies een saus") {
+                                handleSauceChange(product.id, selectedValue);
+                              }
+                            }}
+                          >
+                            {[
+                              { id: 'kies', saus: 'Kies een saus' },  // Add "Kies een saus" as the first sauce option
+                              ...product.sauzen.map((saus) => ({ id: saus.id, saus: saus.saus }))
+                            ].map((saus) => (
+                              <option key={saus.id} value={saus.saus}>
+                                {saus.saus}
+                              </option>
+                            ))}
+                          </select>{" "}
+                        </React.Fragment>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {selectedFoodItemId !== null && (
+            <ImagePopup
+              imageUrl={foodImages[selectedFoodItemId]}
+              onClose={closeImagePopup}
+            />
+          )}
+
         </div>
-        <div>
-        <h2 onClick={() => toggleCollapse('champagne')}>Champagne</h2>
-        {!collapsedCategories.champagne && (
-          <ul>
-            {champagneProducts.map((product) => (
-              <li key={product.id}>
-                <p>
-                {product.naam} - {product.prijs}{"€ "}
-                  <button onClick={() => increaseDrinks(product.id)}>+</button>{"   "}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-        </div>
-        <div>
-        <h2 onClick={() => toggleCollapse('cocktail')}>Cocktail</h2>
-        {!collapsedCategories.cocktail && (
-          <ul>
-            {cocktailProducts.map((product) => (
-              <li key={product.id}>
-                <p>
-                {product.naam} - {product.prijs}{"€ "}
-                  <button onClick={() => increaseDrinks(product.id)}>+</button>{"   "}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-        </div>
-        <p>Total: {total.toFixed(2)} {'€'} - Drinks: {drinkQuantity} - Food: {foodQuantity}</p>
-        <button onClick={handleGeefDoor}>geef door</button>
-      </div>
-      <div>
-        <h2>bestelde producten</h2>
-        <ul>
-          {orderlines.map((orderline, index) => (
-            <li key={orderline.id}>
-              <p>
-                {orderline.naam} - {orderline.hoeveelheid}
-                {orderline.saus && ` - ${orderline.saus}`}
-                <button onClick={() => decrease(index)}>-</button>
-              </p>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );

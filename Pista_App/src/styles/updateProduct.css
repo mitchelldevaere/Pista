@@ -1,0 +1,44 @@
+/* UpdateProduct.css */
+
+.container-update {
+    max-width: auto;
+    margin: auto;
+  }
+  
+  .h2-update {
+    text-align: center;
+  }
+  
+  .form-update {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+  }
+  
+  .label-update {
+    margin-bottom: 5px;
+  }
+  
+  .input-update, .textarea-update {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .button-update {
+    padding: 10px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .button-update:hover {
+    background-color: #45a049;
+  }
+  

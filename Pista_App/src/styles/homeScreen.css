@@ -1,0 +1,68 @@
+/* homeScreen.css */
+.home-container {
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .title-home {
+    font-size: 24px;
+    margin-bottom: 20px;
+    background-color: #0b5229;
+    padding: 10px;
+    color: white;
+  }
+  
+  .buttons-home {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .buttons-home button {
+    background-color: #0b5229;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+  
+  .buttons-home button:hover {
+    background-color: #0b7240;
+  }
+  
+  .order-details-home {
+    border: 1px solid #0b5229;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+  }
+  
+  .order-details-home h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .order-table-home {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 5px;
+  }
+  
+  .orderline-row-home {
+    border: 1px solid #0b5229;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .orderline-row-home th,
+  .orderline-row-home td {
+    padding: 8px;
+  }
+
+  .total-price {
+    margin-top: 5px;
+  }
+  

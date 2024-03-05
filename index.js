@@ -12,16 +12,14 @@ const reactBuild = path.join(__dirname, 'Pista_App', 'build')
 app.use(express.static(reactBuild))
 
 app.use(bodyParser.json());
-app.use(cors({
-  origin: ["http://192.168.11.236:3000", "http://localhost:3000"], // Replace with your frontend's URL
-}));
+app.use(cors());
 
 // Create a MariaDB pool
 const pool = mariadb.createPool({
-  host: "192.168.11.236",
-  user: "root",
-  password: "Azerty-123",
-  database: "Pista",
+  host: "lapista.depistezulte.be",
+  user: "devlapista",
+  password: "Hy_aw0648",
+  database: "lapista",
   connectionLimit: 5, // adjust as needed
 });
 
@@ -154,7 +152,6 @@ app.post("/api/producten", async (req, res) => {
   }
 }); 
 
-// PUT Endpoint - Updating a Product by ID
 app.put("/api/producten/:id", async (req, res) => {
   const productId = req.params.id;
   const { naam, prijs, soort } = req.body;
@@ -205,6 +202,64 @@ app.post("/api/orders", async (req, res) => {
   }
 });
 
+app.get("/api/order/:order_id", async (req, res) => {
+  const orderId = req.params.order_id;
+
+  try {
+    const conn = await pool.getConnection();
+    
+    // Query to retrieve the order and its associated order lines
+    const query = `
+      SELECT
+        o.id AS order_id,
+        o.tafel_id,
+        o.creation, 
+        o.modification,
+        ol.id AS orderline_id,
+        ol.product_id,
+        ol.naam AS product_naam,
+        ol.prijs AS product_prijs,
+        ol.hoeveelheid,
+        ol.saus,
+        ol.status
+      FROM \`order\` AS o
+      JOIN orderlijnen AS ol ON o.id = ol.order_id
+      WHERE o.id = ?;
+    `;
+
+    const rows = await conn.query(query, [orderId]);
+    conn.release();
+
+    // Check if the order with the specified ID exists
+    if (rows.length === 0) {
+      res.status(404).json({ message: "Order not found" });
+    } else {
+      // Organize the data into a structure that represents the order and its order lines
+      const orderData = {
+        id: rows[0].order_id,
+        tafel_id: rows[0].tafel_id,
+        creation: rows[0].creation,
+        modification: rows[0].modification,
+        orderlines: rows.map(row => ({
+          id: row.orderline_id,
+          product_id: row.product_id,
+          naam: row.product_naam,
+          prijs: row.product_prijs,
+          hoeveelheid: row.hoeveelheid,
+          saus: row.saus,
+          status: row.status
+        }))
+      };
+
+      res.json(orderData);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+
 app.get("/api/orders/:tafel_id", async (req, res) => {
   const tafelId = req.params.tafel_id;
 
@@ -228,55 +283,9 @@ app.get("/api/orders/:tafel_id", async (req, res) => {
 app.get("/api/orders", async (req, res) => {
   try {
     const conn = await pool.getConnection();
-
-    const query = `
-      SELECT
-        o.id AS order_id,
-        o.tafel_id,
-        o.creation, 
-        o.modification,
-        ol.id AS orderline_id,
-        ol.product_id,
-        ol.naam AS product_naam,
-        ol.prijs AS product_prijs,
-        ol.hoeveelheid,
-        ol.saus,
-        ol.status
-      FROM \`order\` AS o
-      JOIN orderlijnen AS ol ON o.id = ol.order_id
-      WHERE ol.status = 0
-    `;
-
-    const rows = await conn.query(query);
+    const rows = await conn.query("SELECT * FROM open_order_items");
     conn.release();
-
-    // Organize the data into a structure that groups orders and their order lines
-    const ordersWithOrderlines = {};
-    rows.forEach(row => {
-      if (!ordersWithOrderlines[row.order_id]) {
-        ordersWithOrderlines[row.order_id] = {
-          id: row.order_id,
-          tafel_id: row.tafel_id,
-          creation: row.creation,
-          modification: row.modification,
-          orderlines: []
-        };
-      }
-      ordersWithOrderlines[row.order_id].orderlines.push({
-        id: row.orderline_id,
-        product_id: row.product_id,
-        product_naam: row.product_naam,
-        product_prijs: row.product_prijs,
-        hoeveelheid: row.hoeveelheid,
-        saus: row.saus,
-        status: row.status
-      });
-    });
-
-    // Convert the grouped data object into an array
-    const ordersArray = Object.values(ordersWithOrderlines);
-
-    res.json(ordersArray);
+    res.json(rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server Error" });
@@ -382,6 +391,7 @@ app.put('/api/orderlijnen/:id', async (req, res) => {
     await conn.query("UPDATE orderlijnen SET status = 1 WHERE id = ?", [orderLineId]);
 
     conn.release();
+
     res.status(200).json({ message: "Order line status updated successfully" });
   } catch (err) {
     console.error(err);

@@ -7,6 +7,8 @@ import HomeScreen from "./Screens/HomeScreen";
 import OrderScreen from "./Screens/OrderScreen";
 import TafelDetailScreen from "./Screens/TafelDetailScreen"
 import OrdersScreen from "./Screens/OrdersScreen";
+import SuccesScreen from "./Screens/SuccesScreen";
+import EditScreen from "./Screens/EditScreen";
 import './App.css';
 
 function App () {
@@ -20,6 +22,8 @@ function App () {
         <Route path="/order/:id" component={OrderScreen} />
         <Route path="/tafel/:id" component={TafelDetailScreen} />
         <Route path="/orders" component={OrdersScreen} />
+        <Route path="/succes" component={SuccesScreen} />
+        <Route path="/edit" component={EditScreen} />
       </Switch>
     </Router>
   );

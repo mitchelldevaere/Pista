@@ -1,0 +1,49 @@
+/* succesScreenStyles.css */
+.container-succesScreen {
+    margin: 0 auto;
+  }
+  
+  .header-succes {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+    background-color: #0b5229;
+    padding: 8px;
+  }
+
+  .content-body-succes {
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #0b5229;
+    border-radius: 5px;
+  }
+  
+  .order-table-succes {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 5px;
+  }
+  
+  .orderline-row-succes {
+    border: 1px solid #0b5229;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .back-button-succes {
+    background-color: #0b5229;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 100%;
+  }
+  
+  .total-price-succes {
+    text-align: center;
+    margin-top: 20px;
+  }
+  

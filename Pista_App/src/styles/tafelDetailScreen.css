@@ -1,0 +1,54 @@
+/* TafelDetailScreen.css */
+.tafel-detail-container {
+  margin: 0 auto;
+}
+
+.header-table {
+  text-align: left;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #0b5229;
+  color: white;
+}
+
+.order-list-table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.order-container-table {
+  border: 1px solid #0b5229;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  border-radius: 5px;
+}
+
+.orderline-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orderline-row {
+  border: 1px solid #0b5229;
+  text-align: center;
+  border-radius: 5px;
+  border-radius: 5px;
+}
+
+.back-button-table {
+  background-color: #0b5229;
+  color: white;
+  border: none;
+  padding: 10px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.content-body-table {
+  margin: 20px;
+}

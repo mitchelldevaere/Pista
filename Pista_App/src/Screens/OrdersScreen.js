@@ -1,55 +1,43 @@
 import React, { useEffect, useState } from 'react';
+import '../styles/ordersScreen.css';
 
 function OrdersScreen() {
   const [orders, setOrders] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('food');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 10000);
+    const intervalId = setInterval(fetchData, 2000);
 
     return () => clearInterval(intervalId);
   }, []);
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://192.168.11.236:3000/api/orders');
+      const response = await fetch('https://lapista.depistezulte.be/api/orders');
       const data = await response.json();
       setOrders(data);
-      console.log(data)
+      setLoading(false);
+      setError(null);
     } catch (error) {
       console.error('Error fetching orders:', error);
+      setLoading(false);
+      setError('Error fetching orders. Please try again.');
     }
   };
 
-  const markOrderLineAsCompleted = async (orderId, orderLineId) => {
+  const markOrderLineAsCompleted = async (orderLineId) => {
     try {
-      const response = await fetch(`http://192.168.11.236:3000/api/orderlijnen/${orderLineId}`, {
+      const response = await fetch(`https://lapista.depistezulte.be/api/orderlijnen/${orderLineId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          status: 1
-        })
+        body: JSON.stringify({}),
       });
 
-      if (response.ok) {
-        // Remove the order line from the state
-        setOrders(prevOrders => {
-          const updatedOrders = prevOrders.map(order => {
-            if (order.id === orderId) {
-              return {
-                ...order,
-                orderlines: order.orderlines.filter(orderline => orderline.id !== orderLineId)
-              };
-            }
-            return order;
-          });
-          return updatedOrders;
-        });
-        //calculateTotalPrice();
-      } else {
+      if (!response.ok) {
         console.error('Error updating order line status');
       }
     } catch (error) {
@@ -57,81 +45,128 @@ function OrdersScreen() {
     }
   };
 
-  const calculateTotalPrice = (orderlines) => {
-    return orderlines.reduce((total, orderline) => {
-      return total + orderline.hoeveelheid * orderline.product_prijs;
-    }, 0);
+  const markBarOrdersAsCompleted = async (orderGroup, barNumber) => {
+    try {
+      const barOrders = orderGroup.orderLines.filter((order) => order.bar === barNumber);
+      for (const order of barOrders) {
+        await markOrderLineAsCompleted(order.orderline_id);
+      }
+    } catch (error) {
+      console.error(`Error marking Bar ${barNumber} orders as completed:`, error);
+    }
   };
 
-  const filteredOrders = orders.filter(order => {
-    // Filter out orders with all order lines having status 1
-    return order.orderlines.some(orderline => orderline.status === 0);
-  });
+  const groupOrders = (orderLines) => {
+    const groupedOrders = {};
 
-  const filteredOrdersByCategory = filteredOrders.filter(order => {
-    if (selectedCategory === 'food') {
-      return order.orderlines.some(orderline => orderline.saus !== "/" && orderline.status === 0);
-    } else if (selectedCategory === 'drinks') {
-      return order.orderlines.some(orderline => orderline.saus === "/" && orderline.status === 0);
-    }
-    return false;
-  });  
+    orderLines.forEach(orderLine => {
+      const orderId = orderLine.order_id;
+      const tafelId = orderLine.tafel_id;
+      const prijs = orderLine.prijs;
+
+      const key = `${orderId}-${tafelId}`;
+      if (!groupedOrders[key]) {
+        groupedOrders[key] = {
+          orderId,
+          tafelId,
+          prijs,
+          orderLines: [],
+        };
+      }
+
+      groupedOrders[key].orderLines.push(orderLine);
+    });
+
+    return Object.values(groupedOrders);
+  };
 
   return (
     <div>
-      <div>
-        <button onClick={() => setSelectedCategory('food')}>Food Orders</button>
-        <button onClick={() => setSelectedCategory('drinks')}>Drinks Orders</button>
-      </div>
-      {selectedCategory === 'food' ? (
-        filteredOrdersByCategory.map(order => (
-          <div key={order.id}>
-            <h2>Order ID: {order.id}</h2>
-            <p>Table ID: {order.tafel_id}</p>
-            
-            {/* Rendering food order lines */}
-            <h3>Food:</h3>
-            <ul>
-              {order.orderlines.filter(orderline => orderline.saus !== "/" && orderline.status === 0).map(orderline => (
-                <li key={orderline.id}>
-                  Product: {orderline.id} {orderline.product_naam} | Quantity: {orderline.hoeveelheid} | Price: {orderline.product_prijs}
-                  {orderline.saus && <span> | Sauce: {orderline.saus}</span>}
-                  <button onClick={() => markOrderLineAsCompleted(order.id, orderline.id)}>klaar</button>
-                </li>
+      {loading && <p>Loading...</p>}
+      {error && <p className="error-message">{error}</p>}
+      {!loading && !error && (
+        <table>
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Tafel</th>
+              <th>Vakjes</th>
+              <th>Bar 1 Orders</th>
+              <th>Bar 1</th>
+              <th>Bar 2 Orders</th>
+              <th>Bar 2</th>
+              <th>Bar 3 Orders</th>
+              <th>Bar 3</th>
+            </tr>
+          </thead>
+          <tbody>
+            {groupOrders(orders)
+              .sort((a, b) => a.orderId - b.orderId)
+              .map((groupedOrder) => (
+                <tr key={`${groupedOrder.orderId}-${groupedOrder.tafelId}`}>
+                  <td>{groupedOrder.orderId}</td>
+                  <td>{groupedOrder.tafelId}</td>
+                  <td>{groupedOrder.prijs}</td>
+                  <td>
+                    {groupedOrder.orderLines
+                      .filter((order) => order.bar === 1)
+                      .map((order) => (
+                        <p key={order.orderline_id}>
+                          {order.hoeveelheid} x {order.naam}
+                          {order.saus !== "/" && ` - ${order.saus}`}
+                        </p>
+                      ))}
+                  </td>
+                  <td>
+                    <button
+                      className="klaar-button-orders"
+                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 1)}
+                    >
+                      OK 1
+                    </button>
+                  </td>
+                  <td>
+                    {groupedOrder.orderLines
+                      .filter((order) => order.bar === 2)
+                      .map((order) => (
+                        <p key={order.orderline_id}>
+                          {order.hoeveelheid} x {order.naam}
+                        </p>
+                      ))}
+                  </td>
+                  <td>
+                    <button
+                      className="klaar-button-orders"
+                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 2)}
+                    >
+                      OK 2
+                    </button>
+                  </td>
+                  <td>
+                    {groupedOrder.orderLines
+                      .filter((order) => order.bar === 3)
+                      .map((order) => (
+                        <p key={order.orderline_id}>
+                          {order.hoeveelheid} x {order.naam}
+                          {order.saus !== "/" && ` - ${order.saus}`}
+                        </p>
+                      ))}
+                  </td>
+                  <td>
+                    <button
+                      className="klaar-button-orders"
+                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 3)}
+                    >
+                      OK 3
+                    </button>
+                  </td>
+                </tr>
               ))}
-            </ul>
-  
-            <div>
-              <strong>Total Price: {calculateTotalPrice(order.orderlines)}</strong>
-            </div>
-          </div>
-        ))
-      ) : (
-        filteredOrdersByCategory.map(order => (
-          <div key={order.id}>
-            <h2>Order ID: {order.id}</h2>
-            <p>Table ID: {order.tafel_id}</p>
-            
-            {/* Rendering drink order lines */}
-            <h3>Drinks:</h3>
-            <ul>
-              {order.orderlines.filter(orderline => orderline.saus === "/" && orderline.status === 0).map(orderline => (
-                <li key={orderline.id}>
-                  Product: {orderline.id} | {orderline.product_naam} | Quantity: {orderline.hoeveelheid} | Price: {orderline.product_prijs}
-                  <button onClick={() => markOrderLineAsCompleted(order.id, orderline.id)}>klaar</button>
-                </li>
-              ))}
-            </ul>
-  
-            <div>
-              <strong>Total Price: {calculateTotalPrice(order.orderlines)}</strong>
-            </div>
-          </div>
-        ))
+          </tbody>
+        </table>
       )}
     </div>
   );
-  
 }
 
 export default OrdersScreen;

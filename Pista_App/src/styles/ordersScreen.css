@@ -1,0 +1,101 @@
+/* ordersScreenStyles.css */
+
+/* Styles for tabs */
+.tabs-orders {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .tabs-orders button {
+    background-color: #0b5229;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 0 10px;
+  }
+  
+  /* Styles for orders */
+  .orders-orders {
+    display: grid;
+    gap: 20px;
+    margin: 10px;
+  }
+  
+  .order-group-orders {
+    border: 1px solid #0b5229;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .order-group-header-orders {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .order-group-header-orders p {
+    margin: 0;
+  }
+
+  .order-line-orders {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #0b5229;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .order-line-text-orders {
+    margin: 0;
+  }
+  
+  .klaar-button-orders {
+    background-color: #0b5229;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 3px;
+  }
+
+  /* Add this CSS to your existing styles */
+/* Styles for the table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #0b5229;
+  border-radius: 5px;
+}
+
+table th, table td {
+  padding: 7px;
+  text-align: center;
+  border: 1px solid #0b5229;
+}
+
+/* Header row */
+table thead tr {
+  background-color: #0b5229;
+  color: white;
+}
+
+/* Alternating row colors */
+table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Hover effect for rows */
+table tbody tr:hover {
+  background-color: #d3d3d3;
+}
+
+  
