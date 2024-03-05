@@ -1,8 +1,6 @@
-// EditScreen.js
-
 import React, { useState } from "react";
-
 import { useParams, useHistory } from "react-router-dom";
+import "../styles/editScreen.css";
 
 function EditScreen({ location }) {
   
@@ -25,6 +23,12 @@ function EditScreen({ location }) {
       updatedOrderlines[index].hoeveelheid -= 1;
       setOrderlines(updatedOrderlines);
     }
+  };
+
+  const deleteProduct = (index) => {
+    const updatedOrderlines = [...orderlines];
+    updatedOrderlines.splice(index, 1); // Remove the product at the specified index
+    setOrderlines(updatedOrderlines);
   };
 
   const handleGeefDoor = () => {
@@ -127,22 +131,33 @@ function EditScreen({ location }) {
     }
   };
 
+  const handleReturnToOrderScreen = () => {
+    history.push(`/order/${id}`, { orderlines });
+  };
+
   return (
-    <div>
-      <h1>Edit Screen</h1>
-      {/* Display or edit orderlines as needed */}
-      <ul>
-        {orderlines.map((orderline, index) => (
-          <li key={orderline.id}>
-            {orderline.naam} - {orderline.hoeveelheid} stuks
-            <button onClick={() => increaseQuantity(index)}>Increase</button>
-            <button onClick={() => decreaseQuantity(index)}>Decrease</button>
-          </li>
-        ))}
-      </ul>
-      <div>
-      <button className="geef-door-button-order" onClick={handleGeefDoor}>
-        </button>
+    <div className="edit-container">
+      <div className="edit-header">
+        <h1 className="edit-title">Edit Screen</h1>
+        <button className="edit-back-button" onClick={() => handleReturnToOrderScreen()}>Back to OrderScreen</button>
+      </div>
+      <div className="edit-content">
+        {/* Display or edit orderlines as needed */}
+        <ul className="edit-order-items">
+          {orderlines.map((orderline, index) => (
+            <li key={orderline.id} className="edit-ordered-item">
+              <div className="edit-item-info">
+                {orderline.naam} - {orderline.hoeveelheid} stuks
+              </div>
+              <div className="edit-item-quantity">
+                <button className="edit-quantity-button" onClick={() => decreaseQuantity(index)}>-</button>
+                <button className="edit-quantity-button" onClick={() => increaseQuantity(index)}>+</button>
+                <button className="edit-delete-button" onClick={() => deleteProduct(index)}>Verwijder</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <button className="edit-geef-door-button" onClick={handleGeefDoor}>Geef Door</button>
       </div>
     </div>
   );
