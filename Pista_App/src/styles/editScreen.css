@@ -3,7 +3,6 @@
 .edit-container {
     font-family: Arial, sans-serif;
     margin: 0 auto;
-    padding: 20px;
   }
   
   .edit-header {
@@ -13,6 +12,18 @@
     padding: 10px;
     width: 100%;
     margin: 0;
+  }
+
+  .edit-orders {
+    border: 2px solid #0b5229;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  .edit-orders:last-child {
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
   
   .edit-header-info {
@@ -45,23 +56,16 @@
     padding: 10px;
   }
   
-  .edit-order-items {
-    border: 2px solid #0b5229;
-    border-radius: 5px;
+  .edit-ordered-item {
     padding: 10px;
-    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-bottom: 1px solid #0b5229;
   }
   
-  .edit-ordered-items ul {
+  .edit-ordered-item ul {
     padding-left: 0;
     list-style: none;
-  }
-  
-  .edit-ordered-items ul li {
-    margin: 0;
-    padding: 10px 0;
-    border-bottom: 1px solid #0b5229;
-    font-size: 20px;
   }
   
   .edit-item-info {

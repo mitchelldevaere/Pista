@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import {  useHistory } from "react-router-dom";
 import "../styles/editScreen.css";
 
 function EditScreen({ location }) {
@@ -27,9 +27,21 @@ function EditScreen({ location }) {
 
   const deleteProduct = (index) => {
     const updatedOrderlines = [...orderlines];
-    updatedOrderlines.splice(index, 1); // Remove the product at the specified index
+    updatedOrderlines.splice(index, 1);
     setOrderlines(updatedOrderlines);
   };
+
+  const calculateTotalPrice = (orderlines) => {
+    console.log(orderlines)
+    let totalPrice = 0;
+    
+    orderlines.forEach(orderline => {
+      const linePrice = orderline.prijs * orderline.hoeveelheid;
+      totalPrice += linePrice;
+    });
+  
+    return totalPrice
+  }
 
   const handleGeefDoor = () => {
     if (orderlinesProp.length !== 0) {
@@ -142,25 +154,29 @@ function EditScreen({ location }) {
         <button className="edit-back-button" onClick={() => handleReturnToOrderScreen()}>Back to OrderScreen</button>
       </div>
       <div className="edit-content">
-        {/* Display or edit orderlines as needed */}
-        <ul className="edit-order-items">
+        <div>
+          <h2>{calculateTotalPrice(orderlines) * 2} vakjes</h2>
+        </div>
+        <div className="edit-orders">
           {orderlines.map((orderline, index) => (
-            <li key={orderline.id} className="edit-ordered-item">
+            <div key={orderline.id} className="edit-ordered-item">
               <div className="edit-item-info">
-                {orderline.naam} - {orderline.hoeveelheid} stuks
+                {orderline.naam} {orderline.saus === "/" ? null : `- ${orderline.saus}`} - {orderline.hoeveelheid} stuks
               </div>
               <div className="edit-item-quantity">
                 <button className="edit-quantity-button" onClick={() => decreaseQuantity(index)}>-</button>
                 <button className="edit-quantity-button" onClick={() => increaseQuantity(index)}>+</button>
                 <button className="edit-delete-button" onClick={() => deleteProduct(index)}>Verwijder</button>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
-        <button className="edit-geef-door-button" onClick={handleGeefDoor}>Geef Door</button>
+        </div>
+        <div>
+          <button className="edit-geef-door-button" onClick={handleGeefDoor}>Geef Door</button>
+        </div>
       </div>
     </div>
-  );
+  );  
 }
 
 export default EditScreen;
