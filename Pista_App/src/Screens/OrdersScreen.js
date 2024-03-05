@@ -8,9 +8,6 @@ function OrdersScreen() {
 
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 2000);
-
-    return () => clearInterval(intervalId);
   }, []);
 
   const fetchData = async () => {
@@ -39,6 +36,8 @@ function OrdersScreen() {
 
       if (!response.ok) {
         console.error('Error updating order line status');
+      } else {
+        fetchData(); // Refresh orders after marking as completed
       }
     } catch (error) {
       console.error('Error updating order line:', error);
@@ -118,12 +117,9 @@ function OrdersScreen() {
                       ))}
                   </td>
                   <td>
-                    <button
-                      className="klaar-button-orders"
-                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 1)}
-                    >
-                      OK 1
-                    </button>
+                    {groupedOrder.orderLines && groupedOrder.orderLines.some(order => order.bar === 1) && (
+                      <button className="klaar-button-orders" onClick={() => markBarOrdersAsCompleted(groupedOrder, 1)}>OK 1</button>
+                    )}
                   </td>
                   <td>
                     {groupedOrder.orderLines
@@ -135,12 +131,9 @@ function OrdersScreen() {
                       ))}
                   </td>
                   <td>
-                    <button
-                      className="klaar-button-orders"
-                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 2)}
-                    >
-                      OK 2
-                    </button>
+                    {groupedOrder.orderLines && groupedOrder.orderLines.some(order => order.bar === 2) && (
+                      <button className="klaar-button-orders" onClick={() => markBarOrdersAsCompleted(groupedOrder, 2)}>OK 1</button>
+                    )}
                   </td>
                   <td>
                     {groupedOrder.orderLines
@@ -153,12 +146,9 @@ function OrdersScreen() {
                       ))}
                   </td>
                   <td>
-                    <button
-                      className="klaar-button-orders"
-                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 3)}
-                    >
-                      OK 3
-                    </button>
+                    {groupedOrder.orderLines && groupedOrder.orderLines.some(order => order.bar === 3) && (
+                      <button className="klaar-button-orders" onClick={() => markBarOrdersAsCompleted(groupedOrder, 3)}>OK 1</button>
+                    )}
                   </td>
                 </tr>
               ))}
