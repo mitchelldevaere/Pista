@@ -292,6 +292,30 @@ app.get("/api/orders", async (req, res) => {
   }
 });
 
+app.get("/api/ordersBar3", async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    const rows = await conn.query("SELECT * FROM open_order_items");
+    conn.release();
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+app.get("/api/ordersBar1And2", async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    const rows = await conn.query("SELECT * FROM open_order_items");
+    conn.release();
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 app.get("/api/allOrders/:tafel_id", async (req, res) => {
   const tafelId = req.params.tafel_id;
 
