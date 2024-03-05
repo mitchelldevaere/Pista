@@ -87,8 +87,8 @@ function OrdersScreen() {
         <table>
           <thead>
             <tr>
-              <th>Order</th>
               <th>Tafel</th>
+              <th>Order</th>
               <th>Vakjes</th>
               <th>Bar 1 Orders</th>
               <th>Bar 1</th>
@@ -103,8 +103,8 @@ function OrdersScreen() {
               .sort((a, b) => a.orderId - b.orderId)
               .map((groupedOrder) => (
                 <tr key={`${groupedOrder.orderId}-${groupedOrder.tafelId}`}>
-                  <td>{groupedOrder.orderId}</td>
                   <td>{groupedOrder.tafelId}</td>
+                  <td>{groupedOrder.orderId}</td>
                   <td>{groupedOrder.prijs}</td>
                   <td>
                     {groupedOrder.orderLines
