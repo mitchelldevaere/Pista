@@ -80,7 +80,7 @@ function OrdersScreen() {
   };
 
   return (
-    <div>
+    <div translate="no">
       {loading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
       {!loading && !error && (

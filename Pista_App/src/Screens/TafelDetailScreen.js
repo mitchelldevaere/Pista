@@ -36,7 +36,7 @@ function TafelDetailScreen() {
   }
 
   return (
-    <div className="tafel-detail-container">
+    <div className="tafel-detail-container" translate="no">
       <header className="header-table">
         <h1>Table ID: {id}</h1>
       </header>
