@@ -124,7 +124,7 @@ function HomeScreen() {
   };
 
   return (
-    <div className="home-container">
+    <div className="home-container" translate="no">
       <div className="title-home" onClick={handleLogoClick}>
         <img src={logo} alt="logo la pista" height="100"></img>
       </div>

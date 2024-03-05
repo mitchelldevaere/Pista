@@ -41,7 +41,7 @@ function SuccesScreen() {
   };
 
   return (
-    <div className="container-succesScreen">
+    <div className="container-succesScreen" translate="no">
       <div className="header-succes">
         <div>
           <h1>Bedankt voor je bestelling!</h1>
