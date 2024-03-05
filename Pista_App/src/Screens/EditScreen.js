@@ -150,18 +150,18 @@ function EditScreen({ location }) {
   return (
     <div className="edit-container">
       <div className="edit-header">
-        <h1 className="edit-title">Edit Screen</h1>
-        <button className="edit-back-button" onClick={() => handleReturnToOrderScreen()}>Back to OrderScreen</button>
+        <h1 className="edit-title">Controleer je bestelling</h1>
+        <button className="edit-back-button" onClick={() => handleReturnToOrderScreen()}>Bestel nog iets extra</button>
       </div>
       <div className="edit-content">
-        <div>
+        <div className="edit-price">
           <h2>{calculateTotalPrice(orderlines) * 2} vakjes</h2>
         </div>
         <div className="edit-orders">
           {orderlines.map((orderline, index) => (
             <div key={orderline.id} className="edit-ordered-item">
               <div className="edit-item-info">
-                {orderline.naam} {orderline.saus === "/" ? null : `- ${orderline.saus}`} - {orderline.hoeveelheid} stuks
+                {orderline.naam} {orderline.saus === "/" ? null : `- ${orderline.saus}`} - {orderline.hoeveelheid} {orderline.hoeveelheid === 1 ? "stuk" : "stuks"}
               </div>
               <div className="edit-item-quantity">
                 <button className="edit-quantity-button" onClick={() => decreaseQuantity(index)}>-</button>

@@ -14,6 +14,10 @@
     margin: 0;
   }
 
+  .edit-price {
+    text-align: center;
+  }
+
   .edit-orders {
     border: 2px solid #0b5229;
     border-radius: 5px;
@@ -53,7 +57,9 @@
   }
   
   .edit-content {
-    padding: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
   }
   
   .edit-ordered-item {
