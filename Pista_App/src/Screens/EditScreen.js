@@ -114,6 +114,7 @@ function EditScreen({ location }) {
           hoeveelheid: orderline.hoeveelheid,
           saus: orderline.saus,
           status: orderline.status,
+          bereiding: 0
         };
   
         const response = await fetch("https://lapista.depistezulte.be/api/orderlijnen", {
