@@ -283,7 +283,7 @@ function OrderScreen() {
   const hasFoods = orderlines.some((orderline) => orderline.saus !== "/");
 
   return (
-    <div className="order-container">
+    <div className="order-container" translate="no">
 
       <header className="header">
 

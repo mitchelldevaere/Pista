@@ -29,6 +29,7 @@ function App () {
 
         <Route path="/order/:id" component={OrderScreen} />
         <Route path="/tafel/:id" component={TafelDetailScreen} />
+
         <Route path="/succes" component={SuccesScreen} />
         <Route path="/edit" component={EditScreen} />
 

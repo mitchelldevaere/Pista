@@ -114,6 +114,7 @@ function EditScreen({ location }) {
           hoeveelheid: orderline.hoeveelheid,
           saus: orderline.saus,
           status: orderline.status,
+          bereiding: 0
         };
   
         const response = await fetch("https://lapista.depistezulte.be/api/orderlijnen", {
@@ -148,7 +149,7 @@ function EditScreen({ location }) {
   };
 
   return (
-    <div className="edit-container">
+    <div className="edit-container" translate="no">
       <div className="edit-header">
         <h1 className="edit-title">Controleer je bestelling</h1>
         <button className="edit-back-button" onClick={() => handleReturnToOrderScreen()}>Bestel nog iets extra</button>
