@@ -5,13 +5,21 @@ function OrdersScreen() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [checkboxStates, setCheckboxStates] = useState({});
 
   useEffect(() => {
+    const storedCheckboxStates = JSON.parse(localStorage.getItem('checkboxStates')) || {};
+    setCheckboxStates(storedCheckboxStates);
+    
     fetchData();
-    const intervalId = setInterval(fetchData, 2000);
+    const intervalId = setInterval(fetchData, 5000);
 
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates));
+  }, [checkboxStates]);
 
   const fetchData = async () => {
     try {
@@ -39,6 +47,8 @@ function OrdersScreen() {
 
       if (!response.ok) {
         console.error('Error updating order line status');
+      } else {
+        fetchData();
       }
     } catch (error) {
       console.error('Error updating order line:', error);
@@ -81,6 +91,24 @@ function OrdersScreen() {
     return Object.values(groupedOrders);
   };
 
+  const handleBereidingChange = (orderId, tafelId) => {
+    setCheckboxStates(prevState => ({
+      ...prevState,
+      [`${orderId}-${tafelId}-bereiding`]: !prevState[`${orderId}-${tafelId}-bereiding`],
+    }));
+  };
+
+  const handleKlaarChange = (orderId, tafelId) => {
+    setCheckboxStates(prevState => ({
+      ...prevState,
+      [`${orderId}-${tafelId}-klaar`]: !prevState[`${orderId}-${tafelId}-klaar`],
+    }));
+  };
+
+  const isOkDisabled = (orderId, tafelId) => {
+    return !checkboxStates[`${orderId}-${tafelId}-bereiding`] || !checkboxStates[`${orderId}-${tafelId}-klaar`];
+  };
+
   return (
     <div translate="no">
       {loading && <p>Loading...</p>}
@@ -92,37 +120,61 @@ function OrdersScreen() {
               <th>Order</th>
               <th>Tafel</th>
               <th>Vakjes</th>
+              <th>Bereiding</th>
+              <th>Klaar</th>
               <th>Bar 3 Orders</th>
               <th>Bar 3</th>
             </tr>
           </thead>
           <tbody>
             {groupOrders(orders)
-              .sort((a, b) => a.orderId - b.orderId)
-              .map((groupedOrder) => (
-                <tr key={`${groupedOrder.orderId}-${groupedOrder.tafelId}`}>
-                  <td>{groupedOrder.orderId}</td>
-                  <td>{groupedOrder.tafelId}</td>
-                  <td>{groupedOrder.prijs}</td>
-                  <td>
-                    {groupedOrder.orderLines
-                      .map((order) => (
-                        <p key={order.orderline_id}>
-                          {order.hoeveelheid} x {order.naam}
-                          {order.saus !== "/" && ` - ${order.saus}`}
-                        </p>
-                      ))}
-                  </td>
-                  <td>
-                    <button
-                      className="klaar-button-orders"
-                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 3)}
-                    >
-                      OK 3
-                    </button>
-                  </td>
-                </tr>
-              ))}
+             .sort((a, b) => a.orderId - b.orderId)
+             .filter(groupedOrder => groupedOrder.orderLines.some(order => order.bar === 3))
+             .map((groupedOrder) => {
+                const orderId = groupedOrder.orderId;
+                const tafelId = groupedOrder.tafelId;
+  
+                return (
+                  <tr key={`${orderId}-${tafelId}`}>
+                    <td>{orderId}</td>
+                    <td>{tafelId}</td>
+                    <td>{groupedOrder.prijs}</td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={checkboxStates[`${orderId}-${tafelId}-bereiding`] || false}
+                        onChange={() => handleBereidingChange(orderId, tafelId)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={checkboxStates[`${orderId}-${tafelId}-klaar`] || false}
+                        onChange={() => handleKlaarChange(orderId, tafelId)}
+                        disabled={!checkboxStates[`${orderId}-${tafelId}-bereiding`]}
+                      />
+                    </td>
+                    <td>
+                      {groupedOrder.orderLines
+                       .map((order) => (
+                          <p key={order.orderline_id}>
+                            {order.hoeveelheid} x {order.naam}
+                            {order.saus!== "/" && ` - ${order.saus}`}
+                          </p>
+                        ))}
+                    </td>
+                    <td>
+                      <button
+                        className="klaar-button-orders"
+                        onClick={() => markBarOrdersAsCompleted(groupedOrder, 3)}
+                        disabled={isOkDisabled(orderId, tafelId)}
+                      >
+                        OK 3
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       )}

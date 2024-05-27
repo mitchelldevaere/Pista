@@ -10,7 +10,7 @@ function TafelDetailScreen() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  });
 
   const fetchData = async () => {
     try {

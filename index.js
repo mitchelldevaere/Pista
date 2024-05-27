@@ -377,17 +377,17 @@ app.get("/api/allOrders/:tafel_id", async (req, res) => {
 });
 
 app.post("/api/orderlijnen", async (req, res) => {
-  const { order_id, product_id, naam, prijs, hoeveelheid, saus } = req.body;
+  const { order_id, product_id, naam, prijs, hoeveelheid, saus, bereiding } = req.body;
 
   try {
-    if (!order_id || !product_id || !naam || !prijs || !hoeveelheid || !saus) {
+    if (!order_id || !product_id || !naam || !prijs || !hoeveelheid || !saus || !bereiding) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
     const conn = await pool.getConnection();
     await conn.query(
-      "INSERT INTO orderlijnen (order_id, product_id, naam, prijs, hoeveelheid, saus) VALUES (?, ?, ?, ?, ?, ?)",
-      [order_id, product_id, naam, prijs, hoeveelheid, saus]
+      "INSERT INTO orderlijnen (order_id, product_id, naam, prijs, hoeveelheid, saus, bereiding) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [order_id, product_id, naam, prijs, hoeveelheid, saus, bereiding]
     );
     conn.release();
     
