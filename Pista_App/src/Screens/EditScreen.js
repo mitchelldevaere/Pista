@@ -32,7 +32,6 @@ function EditScreen({ location }) {
   };
 
   const calculateTotalPrice = (orderlines) => {
-    console.log(orderlines)
     let totalPrice = 0;
     
     orderlines.forEach(orderline => {
@@ -44,23 +43,24 @@ function EditScreen({ location }) {
   }
 
   const handleGeefDoor = () => {
-    if (orderlinesProp.length !== 0) {
-
-      const now = new Date();
-      const currentTimestamp = now.toISOString().replace('T', ' ').substr(0, 19);
-
-      console.log(currentTimestamp)
-
-      const newOrder = {
-        tafel_id: id,
-        creation: currentTimestamp,
-        modification: currentTimestamp
-      }
-
-      localStorage.removeItem("orderData");
-      postOrder(newOrder)
+    if (orderlines.length === 0) {
+      alert("Je hebt geen producten toegevoegd.")
+      history.push(`/order/${id}`)
     } else {
-      window.alert("Iets anders")
+      if (orderlinesProp.length !== 0) {
+
+        const now = new Date();
+        const currentTimestamp = now.toISOString().replace('T', ' ').substr(0, 19);
+  
+        const newOrder = {
+          tafel_id: id,
+          creation: currentTimestamp,
+          modification: currentTimestamp
+        }
+  
+        localStorage.removeItem("orderData");
+        postOrder(newOrder)
+      }
     }
   };
 
@@ -92,7 +92,6 @@ function EditScreen({ location }) {
     try {
       const response = await fetch(`https://lapista.depistezulte.be/api/orders/${id}`);
       const data = await response.json();
-      console.log(data)
       postOrderlines(data)
     } catch (error) {
       console.error("Error fetching order:", error);
@@ -100,10 +99,13 @@ function EditScreen({ location }) {
   }
 
   const postOrderlines = async (order) => {
-    console.log(order);
-  
     try {
       const orderLineData = []; // Array to store order line data for localStorage
+  
+      if (!orderlines || !Array.isArray(orderlines)) {
+        console.error("Order lines are missing or not an array");
+        return;
+      }
   
       for (const orderline of orderlines) {
         const newOrderLine = {
@@ -113,7 +115,6 @@ function EditScreen({ location }) {
           prijs: orderline.prijs,
           hoeveelheid: orderline.hoeveelheid,
           saus: orderline.saus,
-          status: orderline.status,
           bereiding: 0
         };
   
@@ -127,29 +128,30 @@ function EditScreen({ location }) {
   
         if (!response.ok) {
           console.error("Failed to create order line:", response.statusText);
+        } else {
+          orderLineData.push(newOrderLine);
         }
-  
-        orderLineData.push(newOrderLine);
       }
   
-      console.log(orderLineData);
+      console.log("Order line data:", orderLineData);
   
       // Store the order and order lines data in localStorage
       localStorage.setItem("orderData", JSON.stringify({ order, orderlines: orderLineData }));
   
-      console.log(localStorage.getItem("orderData"));
       history.push("/succes");
     } catch (error) {
       console.error("An error occurred while uploading order lines:", error);
     }
   };
+  
+  
 
   const handleReturnToOrderScreen = () => {
     history.push(`/order/${id}`, { orderlines });
   };
 
   return (
-    <div className="edit-container" translate="no">
+    <div className="edit-container">
       <div className="edit-header">
         <h1 className="edit-title">Controleer je bestelling</h1>
         <button className="edit-back-button" onClick={() => handleReturnToOrderScreen()}>Bestel nog iets extra</button>

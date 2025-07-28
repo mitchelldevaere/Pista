@@ -11,6 +11,7 @@ const UpdateProduct = () => {
     naam: "",
     prijs: "",
     soort: "",
+    bar: ""
   });
 
   useEffect(() => {
@@ -76,6 +77,10 @@ const UpdateProduct = () => {
         <div>
           <label className="label-update">Soort:</label>
           <textarea value={product.soort} onChange={(e) => setProduct({ ...product, soort: e.target.value })} className="textearea-update"/>
+        </div>
+        <div>
+          <label className="label-update">Bar:</label>
+          <textarea value={product.bar} onChange={(e) => setProduct({ ...product, bar: e.target.value })} className="textearea-update"/>
         </div>
         <div>
           <button type="submit" className="button-update">Update</button>

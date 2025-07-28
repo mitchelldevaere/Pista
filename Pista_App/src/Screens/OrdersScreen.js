@@ -61,14 +61,14 @@ function OrdersScreen() {
     orderLines.forEach(orderLine => {
       const orderId = orderLine.order_id;
       const tafelId = orderLine.tafel_id;
-      const prijs = orderLine.prijs;
+      const vakjes = orderLine.vakjes;
 
       const key = `${orderId}-${tafelId}`;
       if (!groupedOrders[key]) {
         groupedOrders[key] = {
           orderId,
           tafelId,
-          prijs,
+          vakjes,
           orderLines: [],
         };
       }
@@ -105,7 +105,7 @@ function OrdersScreen() {
                 <tr key={`${groupedOrder.orderId}-${groupedOrder.tafelId}`}>
                   <td>{groupedOrder.tafelId}</td>
                   <td>{groupedOrder.orderId}</td>
-                  <td>{groupedOrder.prijs}</td>
+                  <td>{groupedOrder.vakjes}</td>
                   <td>
                     {groupedOrder.orderLines
                       .filter((order) => order.bar === 1)

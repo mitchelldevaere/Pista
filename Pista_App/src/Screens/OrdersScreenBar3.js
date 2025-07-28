@@ -7,32 +7,42 @@ function OrdersScreen() {
   const [error, setError] = useState(null);
   const [checkboxStates, setCheckboxStates] = useState({});
 
-  useEffect(() => {
-    const storedCheckboxStates = JSON.parse(localStorage.getItem('checkboxStates')) || {};
-    setCheckboxStates(storedCheckboxStates);
-    
+  useEffect(() => {    
     fetchData();
+    
     const intervalId = setInterval(fetchData, 5000);
 
     return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('checkboxStates', JSON.stringify(checkboxStates));
-  }, [checkboxStates]);
+  });
 
   const fetchData = async () => {
     try {
-      const response = await fetch('https://lapista.depistezulte.be/api/orders');
+      const response = await fetch('https://lapista.depistezulte.be/api/ordersBar3');
+      if (!response.ok) {
+        throw new Error('Failed to fetch orders');
+      }
       const data = await response.json();
       setOrders(data);
+      initializeCheckboxStates(data);
       setLoading(false);
       setError(null);
+
     } catch (error) {
       console.error('Error fetching orders:', error);
       setLoading(false);
       setError('Error fetching orders. Please try again.');
     }
+  };
+
+  const initializeCheckboxStates = (data) => {
+    const newCheckboxStates = {};
+    data.forEach(orderLine => {
+      newCheckboxStates[`${orderLine.orderline_id}-bereiding`] = orderLine.bereiding === 1;
+    });
+    setCheckboxStates(prevState => ({
+      ...prevState,
+      ...newCheckboxStates
+    }));
   };
 
   const markOrderLineAsCompleted = async (orderLineId) => {
@@ -46,7 +56,7 @@ function OrdersScreen() {
       });
 
       if (!response.ok) {
-        console.error('Error updating order line status');
+        throw new Error('Error updating order line status');
       } else {
         fetchData();
       }
@@ -55,14 +65,23 @@ function OrdersScreen() {
     }
   };
 
-  const markBarOrdersAsCompleted = async (orderGroup, barNumber) => {
+  const putBereiding = async (orderLineId) => {
     try {
-      const barOrders = orderGroup.orderLines.filter((order) => order.bar === barNumber);
-      for (const order of barOrders) {
-        await markOrderLineAsCompleted(order.orderline_id);
+      const response = await fetch(`https://lapista.depistezulte.be/api/orderlijnenBereiding/${orderLineId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error updating order line status');
+      } else {
+        fetchData();
       }
     } catch (error) {
-      console.error(`Error marking Bar ${barNumber} orders as completed:`, error);
+      console.error('Error updating order line:', error);
     }
   };
 
@@ -73,14 +92,14 @@ function OrdersScreen() {
       if (orderLine.bar !== 3) return; // Skip if not Bar 3
       const orderId = orderLine.order_id;
       const tafelId = orderLine.tafel_id;
-      const prijs = orderLine.prijs;
+      const vakjes = orderLine.vakjes;
 
       const key = `${orderId}-${tafelId}`;
       if (!groupedOrders[key]) {
         groupedOrders[key] = {
           orderId,
           tafelId,
-          prijs,
+          vakjes,
           orderLines: [],
         };
       }
@@ -91,22 +110,23 @@ function OrdersScreen() {
     return Object.values(groupedOrders);
   };
 
-  const handleBereidingChange = (orderId, tafelId) => {
+  const handleBereidingChange = (orderLineId) => {
+    putBereiding(orderLineId);
     setCheckboxStates(prevState => ({
       ...prevState,
-      [`${orderId}-${tafelId}-bereiding`]: !prevState[`${orderId}-${tafelId}-bereiding`],
+      [`${orderLineId}-bereiding`]: !prevState[`${orderLineId}-bereiding`],
     }));
   };
 
-  const handleKlaarChange = (orderId, tafelId) => {
+  const handleKlaarChange = (orderLineId) => {
     setCheckboxStates(prevState => ({
       ...prevState,
-      [`${orderId}-${tafelId}-klaar`]: !prevState[`${orderId}-${tafelId}-klaar`],
+      [`${orderLineId}-klaar`]: !prevState[`${orderLineId}-klaar`],
     }));
   };
 
-  const isOkDisabled = (orderId, tafelId) => {
-    return !checkboxStates[`${orderId}-${tafelId}-bereiding`] || !checkboxStates[`${orderId}-${tafelId}-klaar`];
+  const isOkDisabled = (orderLineId) => {
+    return !checkboxStates[`${orderLineId}-bereiding`] || !checkboxStates[`${orderLineId}-klaar`];
   };
 
   return (
@@ -120,60 +140,54 @@ function OrdersScreen() {
               <th>Order</th>
               <th>Tafel</th>
               <th>Vakjes</th>
+              <th>Item</th>
+              <th>Hoeveelheid</th>
+              <th>Saus</th>
               <th>Bereiding</th>
               <th>Klaar</th>
-              <th>Bar 3 Orders</th>
               <th>Bar 3</th>
             </tr>
           </thead>
           <tbody>
             {groupOrders(orders)
-             .sort((a, b) => a.orderId - b.orderId)
-             .filter(groupedOrder => groupedOrder.orderLines.some(order => order.bar === 3))
-             .map((groupedOrder) => {
-                const orderId = groupedOrder.orderId;
-                const tafelId = groupedOrder.tafelId;
-  
-                return (
-                  <tr key={`${orderId}-${tafelId}`}>
+              .sort((a, b) => a.orderId - b.orderId)
+              .map(groupedOrder => {
+                const { orderId, tafelId, vakjes, orderLines } = groupedOrder;
+
+                return orderLines.map(order => (
+                  <tr key={order.orderline_id}>
                     <td>{orderId}</td>
                     <td>{tafelId}</td>
-                    <td>{groupedOrder.prijs}</td>
+                    <td>{vakjes}</td>
+                    <td>{order.naam}</td>
+                    <td>{order.hoeveelheid}</td>
+                    <td>{order.saus !== "/" ? order.saus : ""}</td>
                     <td>
                       <input
                         type="checkbox"
-                        checked={checkboxStates[`${orderId}-${tafelId}-bereiding`] || false}
-                        onChange={() => handleBereidingChange(orderId, tafelId)}
+                        checked={checkboxStates[`${order.orderline_id}-bereiding`] || false}
+                        onChange={() => handleBereidingChange(order.orderline_id)}
                       />
                     </td>
                     <td>
                       <input
                         type="checkbox"
-                        checked={checkboxStates[`${orderId}-${tafelId}-klaar`] || false}
-                        onChange={() => handleKlaarChange(orderId, tafelId)}
-                        disabled={!checkboxStates[`${orderId}-${tafelId}-bereiding`]}
+                        checked={checkboxStates[`${order.orderline_id}-klaar`] || false}
+                        onChange={() => handleKlaarChange(order.orderline_id)}
+                        disabled={!checkboxStates[`${order.orderline_id}-bereiding`]}
                       />
-                    </td>
-                    <td>
-                      {groupedOrder.orderLines
-                       .map((order) => (
-                          <p key={order.orderline_id}>
-                            {order.hoeveelheid} x {order.naam}
-                            {order.saus!== "/" && ` - ${order.saus}`}
-                          </p>
-                        ))}
                     </td>
                     <td>
                       <button
                         className="klaar-button-orders"
-                        onClick={() => markBarOrdersAsCompleted(groupedOrder, 3)}
-                        disabled={isOkDisabled(orderId, tafelId)}
+                        onClick={() => markOrderLineAsCompleted(order.orderline_id)}
+                        disabled={isOkDisabled(order.orderline_id)}
                       >
                         OK 3
                       </button>
                     </td>
                   </tr>
-                );
+                ));
               })}
           </tbody>
         </table>

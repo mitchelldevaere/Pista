@@ -16,7 +16,7 @@ function OrdersScreen() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('https://lapista.depistezulte.be/api/orders');
+      const response = await fetch('https://lapista.depistezulte.be/api/ordersBar1And2');
       const data = await response.json();
       setOrders(data);
       setLoading(false);
@@ -65,22 +65,21 @@ function OrdersScreen() {
     orderLines.forEach(orderLine => {
       const orderId = orderLine.order_id;
       const tafelId = orderLine.tafel_id;
-      const prijs = orderLine.prijs;
+      const vakjes = orderLine.vakjes;
 
       const key = `${orderId}-${tafelId}`;
       if (!groupedOrders[key]) {
         groupedOrders[key] = {
           orderId,
           tafelId,
-          prijs,
+          vakjes,
           orderLines: [],
         };
       }
 
       groupedOrders[key].orderLines.push(orderLine);
     });
-    console.log(groupedOrders)
-
+    
     return Object.values(groupedOrders);
   };
 
@@ -109,7 +108,7 @@ function OrdersScreen() {
                 <tr key={`${groupedOrder.orderId}-${groupedOrder.tafelId}`}>
                   <td>{groupedOrder.orderId}</td>
                   <td>{groupedOrder.tafelId}</td>
-                  <td>{groupedOrder.prijs}</td>
+                  <td>{groupedOrder.vakjes}</td>
                   <td>
                     {groupedOrder.orderLines
                       .filter((order) => order.bar === 1)
@@ -136,6 +135,7 @@ function OrdersScreen() {
                       .map((order) => (
                         <p key={order.orderline_id}>
                           {order.hoeveelheid} x {order.naam}
+                          {order.saus !== "/" && ` - ${order.saus}`}
                         </p>
                       ))}
                   </td>

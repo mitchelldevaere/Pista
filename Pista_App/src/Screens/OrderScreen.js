@@ -93,6 +93,7 @@ function OrderScreen() {
       }));
       setProducts(products);
     } catch (error) {
+      window.alert("Op dit ogenblik is het online bestellen uitgeschakeld. Gelieve een medewerker aan te spreken voor u bestelling.")
       console.error("Error fetching products:", error);
     }
 
@@ -128,7 +129,8 @@ function OrderScreen() {
         prijs: productToUpdate.prijs,
         hoeveelheid: 1,
         saus: "/",
-        status: 0
+        status: 0,
+        bereiding: 0
       };
       setOrderlines((prevOrderlines) => [...prevOrderlines, newOrderLine]);
     }
@@ -188,7 +190,8 @@ function OrderScreen() {
           prijs: productToUpdate.prijs,
           hoeveelheid: 1,
           saus: selectedSauce,
-          status: 0
+          status: 0,
+          bereiding: 0
         };
         setOrderlines((prevOrderlines) => [...prevOrderlines, newOrderLine]);
       }
@@ -244,7 +247,7 @@ function OrderScreen() {
     if (orderlines.length !== 0) {
       history.push({
         pathname: "/edit",
-        state: { orderlines, id },  // Pass orderlines as part of the state
+        state: { orderlines, id },  
       });
     } else {
       window.alert("Kies eerst een product dat je wil bestellen!");
@@ -527,7 +530,7 @@ function OrderScreen() {
                             }}
                           >
                             {[
-                              { id: 'kies', saus: 'Kies een saus' },  // Add "Kies een saus" as the first sauce option
+                              { id: 'kies', saus: 'Kies een topping' },  // Add "Kies een saus" as the first sauce option
                               ...product.sauzen.map((saus) => ({ id: saus.id, saus: saus.saus }))
                             ].map((saus) => (
                               <option key={saus.id} value={saus.saus}>

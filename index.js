@@ -100,7 +100,6 @@ app.get("/api/producten/soort/:soort", async (req, res) => {
   }
 });
 
-
 app.get("/api/producten/:id", async (req, res) => {
   const productId = req.params.id;
 
@@ -259,7 +258,6 @@ app.get("/api/order/:order_id", async (req, res) => {
   }
 });
 
-
 app.get("/api/orders/:tafel_id", async (req, res) => {
   const tafelId = req.params.tafel_id;
 
@@ -295,7 +293,7 @@ app.get("/api/orders", async (req, res) => {
 app.get("/api/ordersBar3", async (req, res) => {
   try {
     const conn = await pool.getConnection();
-    const rows = await conn.query("SELECT * FROM open_order_items");
+    const rows = await conn.query("SELECT * FROM open_order_items_bar3");
     conn.release();
     res.json(rows);
   } catch (err) {
@@ -307,7 +305,7 @@ app.get("/api/ordersBar3", async (req, res) => {
 app.get("/api/ordersBar1And2", async (req, res) => {
   try {
     const conn = await pool.getConnection();
-    const rows = await conn.query("SELECT * FROM open_order_items");
+    const rows = await conn.query("SELECT * FROM open_order_items_bar12");
     conn.release();
     res.json(rows);
   } catch (err) {
@@ -380,11 +378,7 @@ app.post("/api/orderlijnen", async (req, res) => {
   const { order_id, product_id, naam, prijs, hoeveelheid, saus, bereiding } = req.body;
 
   try {
-    if (!order_id || !product_id || !naam || !prijs || !hoeveelheid || !saus || !bereiding) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const conn = await pool.getConnection();
+       const conn = await pool.getConnection();
     await conn.query(
       "INSERT INTO orderlijnen (order_id, product_id, naam, prijs, hoeveelheid, saus, bereiding) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [order_id, product_id, naam, prijs, hoeveelheid, saus, bereiding]
@@ -422,6 +416,31 @@ app.put('/api/orderlijnen/:id', async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
+app.put('/api/orderlijnenBereiding/:id', async (req, res) => {
+  const orderLineId = req.params.id;
+
+  try {
+    const conn = await pool.getConnection();
+
+    // Check if the order line exists
+    const existingOrderLine = await conn.query("SELECT * FROM orderlijnen WHERE id = ?", [orderLineId]);
+    if (existingOrderLine.length === 0) {
+      conn.release();
+      return res.status(404).json({ message: "Order line not found" });
+    }
+
+    // Update the status to 1
+    await conn.query("UPDATE orderlijnen SET bereiding = 1 WHERE id = ?", [orderLineId]);
+
+    conn.release();
+
+    res.status(200).json({ message: "Order line status updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
+  }
+})
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(reactBuild, 'index.html'));

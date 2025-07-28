@@ -9,7 +9,6 @@ function hashPassword(password) {
     const char = password.charCodeAt(i);
     hash = (hash << 5) - hash + char;
   }
-  console.log(hash.toString())
   return hash.toString();
 }
 
@@ -33,7 +32,6 @@ function HomeScreen() {
       setOrderId(parsedData.order.id);
       setTafelId(parsedData.order.tafel_id);
       setLocalStorageData(parsedData);
-      console.log(parsedData)
     }
 
     const timer = setInterval(() => {
@@ -50,7 +48,6 @@ function HomeScreen() {
       const response = await fetch(`https://lapista.depistezulte.be/api/order/${orderId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log(data)
 
         const order = {
           creation: data.creation,
@@ -69,7 +66,6 @@ function HomeScreen() {
 
         // Update state with the new data
         setLocalStorageData(newLocalStorageData);
-        console.log(newLocalStorageData)
       } else {
         console.error('Failed to fetch data');
       }

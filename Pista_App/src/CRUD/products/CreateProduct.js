@@ -7,6 +7,7 @@ const CreateProduct = () => {
   const [naam, setNaam] = useState("");
   const [prijs, setPrijs] = useState("");
   const [soort, setSoort] = useState("");
+  const [bar, setBar] = useState("");
 
   const history = useHistory();
 
@@ -17,7 +18,8 @@ const CreateProduct = () => {
     const product = {
       naam: naam,
       prijs: prijs,
-      soort: soort
+      soort: soort,
+      bar: bar
     };
 
     try {
@@ -60,6 +62,10 @@ const CreateProduct = () => {
         <div>
           <label className="label-update">Soort:</label>
           <textarea value={soort} onChange={(e) => setSoort(e.target.value)} className="textarea-update"/>
+        </div>
+        <div>
+          <label className="label-update">Bar:</label>
+          <textarea value={bar} onChange={(e) => setBar(e.target.value)} className="textarea-update"/>
         </div>
         <div>
           <button type="submit" className="button-update">Create</button>

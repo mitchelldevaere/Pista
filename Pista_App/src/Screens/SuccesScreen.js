@@ -13,11 +13,9 @@ function SuccesScreen() {
   const getOrderDataFromLocalStorage = () => {
 
     const orderDataStorage = localStorage.getItem("orderData");
-    console.log(orderDataStorage)
 
     if (orderDataStorage) {
       const parsedOrderData = JSON.parse(orderDataStorage);
-      console.log(parsedOrderData)
       setOrderData(parsedOrderData);
     } 
   };
