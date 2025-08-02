@@ -93,7 +93,7 @@ function OrderScreen() {
       }));
       setProducts(products);
     } catch (error) {
-      window.alert("Op dit ogenblik is het online bestellen uitgeschakeld. Gelieve een medewerker aan te spreken voor u bestelling.")
+      window.alert("Op dit ogenblik is het online bestellen uitgeschakeld. Gelieve een medewerker aan te spreken voor uw bestelling.")
       console.error("Error fetching products:", error);
     }
 
