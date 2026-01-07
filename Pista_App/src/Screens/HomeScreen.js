@@ -36,7 +36,7 @@ function HomeScreen() {
 
     const timer = setInterval(() => {
       fetchData(orderId);
-    }, 5000);
+    }, 10000);
 
     return () => {
       clearInterval(timer);

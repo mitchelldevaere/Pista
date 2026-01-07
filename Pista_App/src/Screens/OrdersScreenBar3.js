@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import useSound from 'use-sound';
 import '../styles/ordersScreen.css';
+import order from '../sound/Order.mp3'
 
 function OrdersScreen() {
   const [orders, setOrders] = useState([]);
@@ -7,10 +9,11 @@ function OrdersScreen() {
   const [error, setError] = useState(null);
   const [checkboxStates, setCheckboxStates] = useState({});
 
+  const [playSound] = useSound(order);
+
   useEffect(() => {    
     fetchData();
-    
-    const intervalId = setInterval(fetchData, 5000);
+    const intervalId = setInterval(fetchData, 10000);
 
     return () => clearInterval(intervalId);
   });
@@ -26,6 +29,11 @@ function OrdersScreen() {
       initializeCheckboxStates(data);
       setLoading(false);
       setError(null);
+
+      if(orders.length !== data.length)
+        {
+          playSound()
+        }
 
     } catch (error) {
       console.error('Error fetching orders:', error);

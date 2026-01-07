@@ -85,7 +85,7 @@ function OrderScreen() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`https://lapista.depistezulte.be/api/producten`);
+      const response = await fetch(`http://localhost:3000/api/producten`);
       const data = await response.json();
       const products = data.map((product) => ({
         ...product,
@@ -98,7 +98,7 @@ function OrderScreen() {
     }
 
     try {
-      const sauceResponse = await fetch(`https://lapista.depistezulte.be/api/sauzen`);
+      const sauceResponse = await fetch(`http://localhost:3000/api/sauzen`);
       const sauceData = await sauceResponse.json();
       setSauces(sauceData); // Store sauce data in a state variable
     } catch (error) {
