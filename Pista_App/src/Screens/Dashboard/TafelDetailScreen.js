@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-import '../styles/tafelDetailScreen.css';
+import '../../styles/tafelDetailScreen.css';
 
 function TafelDetailScreen() {
   const history = useHistory();

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {  useHistory } from "react-router-dom";
-import "../styles/editScreen.css";
+import "../../styles/editScreen.css";
 
 function EditScreen({ location }) {
   

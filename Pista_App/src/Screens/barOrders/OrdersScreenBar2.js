@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/ordersScreen.css';
+import '../../styles/ordersScreen.css';
 
 function OrdersScreen() {
   const [orders, setOrders] = useState([]);
@@ -8,7 +8,7 @@ function OrdersScreen() {
 
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 2000);
+    const intervalId = setInterval(fetchData, 10000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -91,8 +91,8 @@ function OrdersScreen() {
               <th>Order</th>
               <th>Tafel</th>
               <th>Vakjes</th>
-              <th>Bar 1 Orders</th>
-              <th>Bar 1</th>
+              <th>Bar 2 Orders</th>
+              <th>Bar 2</th>
             </tr>
           </thead>
           <tbody>
@@ -105,20 +105,19 @@ function OrdersScreen() {
                   <td>{groupedOrder.prijs}</td>
                   <td>
                     {groupedOrder.orderLines
-                      .filter((order) => order.bar === 1)
+                      .filter((order) => order.bar === 2)
                       .map((order) => (
                         <p key={order.orderline_id}>
                           {order.hoeveelheid} x {order.naam}
-                          {order.saus !== "/" && ` - ${order.saus}`}
                         </p>
                       ))}
                   </td>
                   <td>
                     <button
                       className="klaar-button-orders"
-                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 1)}
+                      onClick={() => markBarOrdersAsCompleted(groupedOrder, 2)}
                     >
-                      OK 1
+                      OK 2
                     </button>
                   </td>
                 </tr>

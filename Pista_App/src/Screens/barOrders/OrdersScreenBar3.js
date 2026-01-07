@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import useSound from 'use-sound';
-import '../styles/ordersScreen.css';
-import order from '../sound/Order.mp3'
+import '../../styles/ordersScreen.css';
+import order from '../../sound/Order.mp3'
 
 function OrdersScreen() {
   const [orders, setOrders] = useState([]);

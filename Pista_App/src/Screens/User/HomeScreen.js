@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import '../styles/homeScreen.css';
-import logo from '../images/La-Pista-logo-kleur.jpg';
+import '../../styles/homeScreen.css';
+import logo from '../../images/La-Pista-logo-kleur.jpg';
 
 function hashPassword(password) {
   let hash = 0;

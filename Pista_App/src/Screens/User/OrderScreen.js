@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import "../styles/orderScreen.css"
+import "../../styles/orderScreen.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
-import ImagePopup from "../Util/Popup";
+import ImagePopup from "../../Util/Popup";
 
-import image1 from "../images/burger.jpg";
-import image2 from "../images/veggie.jpg";
-import image3 from "../images/pasta.jpg";
-import image4 from "../images/frietjes.jpg";
-import image5 from "../images/tapasbord.jpg";
-import image6 from "../images/aperomix.jpg";
-import image7 from "../images/croque.jpg";
-import image8 from "../images/pannenkoek.jpg";
-import image9 from "../images/ijs.jpeg";
-import image10 from "../images/chips.jpeg";
-import image11 from "../images/aardbei.jpg";
+import image1 from "../../images/burger.jpg";
+import image2 from "../../images/veggie.jpg";
+import image3 from "../../images/pasta.jpg";
+import image4 from "../../images/frietjes.jpg";
+import image5 from "../../images/tapasbord.jpg";
+import image6 from "../../images/aperomix.jpg";
+import image7 from "../../images/croque.jpg";
+import image8 from "../../images/pannenkoek.jpg";
+import image9 from "../../images/ijs.jpeg";
+import image10 from "../../images/chips.jpeg";
+import image11 from "../../images/aardbei.jpg";
 
 function OrderScreen() {
   const history = useHistory();

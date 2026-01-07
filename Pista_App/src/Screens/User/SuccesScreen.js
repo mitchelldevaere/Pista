@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import "../styles/succesScreen.css";
+import "../../styles/succesScreen.css";
 
 function SuccesScreen() {
   const history = useHistory();

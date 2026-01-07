@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/ordersScreen.css';
+import '../../styles/ordersScreen.css';
 
 function OrdersScreen() {
   const [orders, setOrders] = useState([]);
