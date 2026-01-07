@@ -16,10 +16,11 @@ app.use(cors());
 
 // Create a MariaDB pool
 const pool = mariadb.createPool({
-  host: "lapista.depistezulte.be",
-  user: "devlapista",
-  password: "Hy_aw0648",
+  host: "127.0.0.1",
+  user: "root",
+  password: "Azerty-123",
   database: "lapista",
+  port: 5555,
   connectionLimit: 5, // adjust as needed
 });
 
@@ -31,7 +32,7 @@ app.get("/api/sauzen", async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error" + err });
   }
 })
 
