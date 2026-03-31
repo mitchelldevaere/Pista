@@ -80,7 +80,7 @@ function SuccesScreen() {
           </table>
 
           <div className="total-price-succes">
-            <p>Totaal: {calculateTotalOrderPrice() * 2} vakjes</p>
+            <p>Totaal: {calculateTotalOrderPrice()} Euro</p>
           </div>
 
           <div>

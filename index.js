@@ -16,11 +16,10 @@ app.use(cors());
 
 // Create a MariaDB pool
 const pool = mariadb.createPool({
-  host: "127.0.0.1",
-  user: "root",
-  password: "Azerty-123",
+  host: "lapista.depistezulte.be",
+  user: "devlapista",
+  password: "Hy_aw0648",
   database: "lapista",
-  port: 5555,
   connectionLimit: 5, // adjust as needed
 });
 
@@ -45,10 +44,11 @@ app.get("/api/producten", async (req, res) => {
     const query = `
       SELECT
         p.id AS product_id, p.naam AS product_naam, p.prijs AS product_prijs, p.soort AS product_soort,
-        s.id AS saus_id, s.saus AS saus_naam, s.prijs AS saus_prijs
+        s.id AS saus_id, s.saus AS saus_naam, s.prijs AS saus_prijs, p.actief AS product_actief
       FROM product AS p
       LEFT JOIN product_to_saus AS pts ON p.id = pts.product_id
       LEFT JOIN saus AS s ON pts.saus_id = s.id
+      WHERE p.actief = 1
     `;
     const rows = await conn.query(query);
 

@@ -25,15 +25,17 @@ function OrdersScreen() {
         throw new Error('Failed to fetch orders');
       }
       const data = await response.json();
-      setOrders(data);
+      
       initializeCheckboxStates(data);
       setLoading(false);
       setError(null);
 
-      if(orders.length !== data.length)
+      if(data.length > orders.length)
         {
           playSound()
         }
+
+    setOrders(data);
 
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -147,7 +149,7 @@ function OrdersScreen() {
             <tr>
               <th>Order</th>
               <th>Tafel</th>
-              <th>Vakjes</th>
+              <th>Euro</th>
               <th>Item</th>
               <th>Hoeveelheid</th>
               <th>Saus</th>

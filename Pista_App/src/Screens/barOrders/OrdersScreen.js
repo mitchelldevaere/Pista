@@ -89,7 +89,7 @@ function OrdersScreen() {
             <tr>
               <th>Tafel</th>
               <th>Order</th>
-              <th>Vakjes</th>
+              <th>Euro</th>
               <th>Bar 1 Orders</th>
               <th>Bar 1</th>
               <th>Bar 2 Orders</th>

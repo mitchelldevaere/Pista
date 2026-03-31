@@ -173,7 +173,7 @@ function HomeScreen() {
             </tbody>
           </table>
           <div className="total-price">
-            <p>Totaal: {calculateTotalOrderPrice(localStorageData.orderlines) * 2} vakjes</p>
+            <p>Totaal: {calculateTotalOrderPrice(localStorageData.orderlines)} Euro</p>
           </div>
         </div>
       )}

@@ -158,7 +158,7 @@ function EditScreen({ location }) {
       </div>
       <div className="edit-content">
         <div className="edit-price">
-          <h2>{calculateTotalPrice(orderlines) * 2} vakjes</h2>
+          <h2>{calculateTotalPrice(orderlines)} Euro</h2>
         </div>
         <div className="edit-orders">
           {orderlines.map((orderline, index) => (
