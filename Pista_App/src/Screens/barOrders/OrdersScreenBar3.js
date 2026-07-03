@@ -162,13 +162,13 @@ function OrdersScreen() {
             {groupOrders(orders)
               .sort((a, b) => a.orderId - b.orderId)
               .map(groupedOrder => {
-                const { orderId, tafelId, vakjes, orderLines } = groupedOrder;
+                const { orderId, tafelId, orderLines } = groupedOrder;
 
                 return orderLines.map(order => (
                   <tr key={order.orderline_id}>
                     <td>{orderId}</td>
                     <td>{tafelId}</td>
-                    <td>{vakjes}</td>
+                    <td>{order.vakjes}</td>
                     <td>{order.naam}</td>
                     <td>{order.hoeveelheid}</td>
                     <td>{order.saus !== "/" ? order.saus : ""}</td>
