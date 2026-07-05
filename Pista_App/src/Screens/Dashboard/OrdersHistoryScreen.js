@@ -5,6 +5,7 @@ import '../../styles/ordersHistoryScreen.css';
 
 const PAGE_SIZE = 100;
 const SCAN_BATCH_SIZE = 20;
+const CACHE_KEY = 'pista_orders_history_cache';
 
 function OrdersHistoryScreen() {
   const history = useHistory();
@@ -23,6 +24,7 @@ function OrdersHistoryScreen() {
   const [currentPage, setCurrentPage] = useState(0);
   const [nextCursor, setNextCursor] = useState(null);
   const [scanning, setScanning] = useState(false);
+  const [cachedAt, setCachedAt] = useState(null);
 
   const orderExists = async (id) => {
     if (id < 1) return false;
@@ -106,7 +108,43 @@ function OrdersHistoryScreen() {
 
   const currentFilters = () => ({ tafel: tafelFilter, from: dateFrom, to: dateTo });
 
+  const loadCachedOrders = () => {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      console.error('Error reading cached orders:', err);
+      return null;
+    }
+  };
+
+  const saveCachedOrders = (cache) => {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+    } catch (err) {
+      console.error('Error caching orders:', err);
+    }
+  };
+
+  // Rescanning ~1700+ orders one by one is expensive, so the loaded pages are cached in
+  // localStorage. Reopening this screen restores the last view instantly instead of
+  // rescanning from scratch - use "Vernieuwen" to pick up orders placed since then.
   useEffect(() => {
+    const cached = loadCachedOrders();
+    if (cached) {
+      setMaxOrderId(cached.maxOrderId);
+      setTafelFilter(cached.tafelFilter);
+      setDateFrom(cached.dateFrom);
+      setDateTo(cached.dateTo);
+      setSortOrder(cached.sortOrder);
+      setPages(cached.pages);
+      setCurrentPage(cached.currentPage);
+      setNextCursor(cached.nextCursor);
+      setCachedAt(cached.cachedAt);
+      setLoading(false);
+      return;
+    }
+
     (async () => {
       try {
         const max = await findMaxOrderId();
@@ -117,6 +155,7 @@ function OrdersHistoryScreen() {
         setPages([orders]);
         setCurrentPage(0);
         setNextCursor(nextId);
+        persistCache(max, { tafel: '', from: '', to: '' }, sortOrder, [orders], 0, nextId);
       } catch (err) {
         console.error('Error finding latest order:', err);
         setError('Kon de bestellingen niet ophalen.');
@@ -125,6 +164,49 @@ function OrdersHistoryScreen() {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const persistCache = (max, filters, direction, newPages, page, cursor) => {
+    const now = new Date().toISOString();
+    setCachedAt(now);
+    saveCachedOrders({
+      maxOrderId: max,
+      tafelFilter: filters.tafel,
+      dateFrom: filters.from,
+      dateTo: filters.to,
+      sortOrder: direction,
+      pages: newPages,
+      currentPage: page,
+      nextCursor: cursor,
+      cachedAt: now,
+    });
+  };
+
+  const refreshOrders = () => {
+    localStorage.removeItem(CACHE_KEY);
+    setPages([]);
+    setCurrentPage(0);
+    setMaxOrderId(null);
+    setLoading(true);
+    setCachedAt(null);
+    (async () => {
+      try {
+        const max = await findMaxOrderId();
+        setMaxOrderId(max);
+        setLoading(false);
+        const filters = currentFilters();
+        const start = sortOrder === 'asc' ? 1 : max;
+        const { orders, nextId } = await fetchPage(start, filters, sortOrder, max);
+        setPages([orders]);
+        setCurrentPage(0);
+        setNextCursor(nextId);
+        persistCache(max, filters, sortOrder, [orders], 0, nextId);
+      } catch (err) {
+        console.error('Error refreshing orders:', err);
+        setError('Kon de bestellingen niet ophalen.');
+        setLoading(false);
+      }
+    })();
+  };
 
   const hasMore = (cursor, max) => isInRange(cursor, max);
 
@@ -139,6 +221,7 @@ function OrdersHistoryScreen() {
       setPages([orders]);
       setCurrentPage(0);
       setNextCursor(nextId);
+      persistCache(maxOrderId, filters, direction, [orders], 0, nextId);
     } catch (err) {
       console.error('Error scanning orders:', err);
       setError('Kon de bestellingen niet ophalen.');
@@ -149,7 +232,9 @@ function OrdersHistoryScreen() {
 
   const goNext = async () => {
     if (currentPage < pages.length - 1) {
-      setCurrentPage((prev) => prev + 1);
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      persistCache(maxOrderId, currentFilters(), sortOrder, pages, newPage, nextCursor);
       return;
     }
     if (!hasMore(nextCursor, maxOrderId)) return;
@@ -158,9 +243,11 @@ function OrdersHistoryScreen() {
     setError(null);
     try {
       const { orders, nextId } = await fetchPage(nextCursor, currentFilters(), sortOrder, maxOrderId);
-      setPages((prev) => [...prev, orders]);
-      setCurrentPage((prev) => prev + 1);
+      const newPages = [...pages, orders];
+      setPages(newPages);
+      setCurrentPage(newPages.length - 1);
       setNextCursor(nextId);
+      persistCache(maxOrderId, currentFilters(), sortOrder, newPages, newPages.length - 1, nextId);
     } catch (err) {
       console.error('Error scanning orders:', err);
       setError('Kon de volgende pagina niet ophalen.');
@@ -171,12 +258,15 @@ function OrdersHistoryScreen() {
 
   const goPrev = () => {
     if (currentPage > 0) {
-      setCurrentPage((prev) => prev - 1);
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      persistCache(maxOrderId, currentFilters(), sortOrder, pages, newPage, nextCursor);
     }
   };
 
   const goFirst = () => {
     setCurrentPage(0);
+    persistCache(maxOrderId, currentFilters(), sortOrder, pages, 0, nextCursor);
   };
 
   const goLast = async () => {
@@ -194,6 +284,7 @@ function OrdersHistoryScreen() {
       setPages(allPages);
       setCurrentPage(allPages.length - 1);
       setNextCursor(cursor);
+      persistCache(maxOrderId, filters, sortOrder, allPages, allPages.length - 1, cursor);
     } catch (err) {
       console.error('Error scanning orders:', err);
       setError('Kon de laatste pagina niet ophalen.');
@@ -280,7 +371,14 @@ function OrdersHistoryScreen() {
             </label>
             <button type="submit" className="button-product">Filter</button>
             <button type="button" className="button-product" onClick={clearFilters}>Wis filters</button>
+            <button type="button" className="button-product" onClick={refreshOrders} disabled={scanning}>Vernieuwen</button>
           </form>
+
+          {cachedAt && !scanning && (
+            <p className="progress-text-product">
+              Laatst vernieuwd: {new Date(cachedAt).toLocaleString('nl-BE', { timeZone: 'Europe/Brussels' })}
+            </p>
+          )}
 
           {scanning && <p>Bestellingen laden...</p>}
 

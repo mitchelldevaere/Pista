@@ -3,6 +3,12 @@ import NavBar from "../../Util/NavBar";
 import { useHistory } from 'react-router-dom';
 import "../../styles/getProduct.css"
 
+// Same categories the customer menu (OrderScreen.js) filters on. Anything whose "soort"
+// doesn't match one of these exactly is invisible there, so it's grouped here under
+// "Overig" instead of being silently dropped, to make miscategorized products visible.
+const KNOWN_CATEGORIES = ["eten", "frisdrank", "bier", "wijn", "champagne", "cocktail"];
+const OTHER_CATEGORY = "Overig";
+
 const ProductsScreen = () => {
   const history = useHistory();
 
@@ -59,6 +65,47 @@ const ProductsScreen = () => {
     return () => clearInterval(refreshInterval);
   }, []);
 
+  const groupedProducts = [...KNOWN_CATEGORIES, OTHER_CATEGORY].map((category) => ({
+    category,
+    items: products.filter((product) =>
+      category === OTHER_CATEGORY
+        ? !KNOWN_CATEGORIES.includes(product.soort)
+        : product.soort === category
+    ),
+  })).filter((group) => group.items.length > 0);
+
+  const renderProductTable = (items) => (
+    <div className="table-wrapper-product">
+      <table className="data-table-product">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Naam</th>
+            <th>Prijs</th>
+            <th>Soort</th>
+            <th>Bar</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((product) => (
+            <tr key={product.id}>
+              <td>{product.id}</td>
+              <td>{product.naam}</td>
+              <td>{product.prijs}€</td>
+              <td>{product.soort}</td>
+              <td>{product.bar}</td>
+              <td>
+                <button onClick={() => deleteProduct(product.id)} className="button-product">Delete</button>
+                <button onClick={() => updateProduct(product.id)} className="button-product">Update</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
   return (
     <div className="container-product">
       <NavBar className="navbar-product" />
@@ -68,35 +115,15 @@ const ProductsScreen = () => {
         <p>Laden...</p>
       ) : (
         <>
-          <div className="table-wrapper-product">
-            <table className="data-table-product">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Naam</th>
-                  <th>Prijs</th>
-                  <th>Soort</th>
-                  <th>Bar</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product) => (
-                  <tr key={product.id}>
-                    <td>{product.id}</td>
-                    <td>{product.naam}</td>
-                    <td>{product.prijs}€</td>
-                    <td>{product.soort}</td>
-                    <td>{product.bar}</td>
-                    <td>
-                      <button onClick={() => deleteProduct(product.id)} className="button-product">Delete</button>
-                      <button onClick={() => updateProduct(product.id)} className="button-product">Update</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {groupedProducts.map((group) => (
+            <React.Fragment key={group.category}>
+              <h3 className="h3-product">
+                {group.category}
+                {group.category === OTHER_CATEGORY && ' (onbekende soort - onzichtbaar in de bestel-app)'}
+              </h3>
+              {renderProductTable(group.items)}
+            </React.Fragment>
+          ))}
 
           <button className="create-button-product" onClick={() => CreateButtonClicked()}>Create</button>
         </>

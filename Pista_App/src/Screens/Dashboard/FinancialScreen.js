@@ -4,6 +4,7 @@ import NavBar from "../../Util/NavBar";
 import "../../styles/getProduct.css"
 
 const TOP_TABLES_COUNT = 10;
+const CACHE_KEY = 'pista_financial_stats_cache';
 
 const FinancialScreen = () => {
   const history = useHistory();
@@ -16,6 +17,7 @@ const FinancialScreen = () => {
   const [topTables, setTopTables] = useState([]);
   const [calculating, setCalculating] = useState(false);
   const [calcProgress, setCalcProgress] = useState({ done: 0, total: 0 });
+  const [calculatedAt, setCalculatedAt] = useState(null);
 
   const fetchOrders = async () => {
     try {
@@ -30,10 +32,20 @@ const FinancialScreen = () => {
 
   useEffect(() => {
     fetchOrders().finally(() => setLoading(false));
-    calculateAllTimeRevenue();
 
-    // The all-time revenue is left out of this since it walks every order ever placed
-    // and is too expensive to redo every minute - use the "Herbereken" button for that.
+    // The all-order scan is expensive (walks every order ever placed), so its result is
+    // cached in localStorage and only recomputed on demand via the "Herbereken" button -
+    // not every time this screen is opened.
+    const cached = loadCachedStats();
+    if (cached) {
+      setAllTimeRevenue(cached.allTimeRevenue);
+      setDailyRevenue(cached.dailyRevenue);
+      setTopTables(cached.topTables);
+      setCalculatedAt(cached.calculatedAt);
+    } else {
+      calculateAllTimeRevenue();
+    }
+
     const refreshInterval = setInterval(() => {
       fetchOrders();
     }, 60000);
@@ -41,6 +53,24 @@ const FinancialScreen = () => {
     return () => clearInterval(refreshInterval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const loadCachedStats = () => {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      console.error('Error reading cached financial stats:', err);
+      return null;
+    }
+  };
+
+  const saveCachedStats = (stats) => {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(stats));
+    } catch (err) {
+      console.error('Error caching financial stats:', err);
+    }
+  };
 
   // Orders are numbered sequentially starting at 1, and /api/order/:id returns every
   // order ever placed (with price/quantity per line), so all-time revenue is computed
@@ -115,18 +145,25 @@ const FinancialScreen = () => {
         setCalcProgress({ done: Math.min(start + batchSize - 1, maxId), total: maxId });
       }
 
+      const sortedDailyRevenue = Object.entries(perDay)
+        .map(([date, omzet]) => ({ date, omzet }))
+        .sort((a, b) => (a.date < b.date ? 1 : -1));
+      const sortedTopTables = Object.entries(perTable)
+        .map(([tafelId, omzet]) => ({ tafelId, omzet }))
+        .sort((a, b) => b.omzet - a.omzet)
+        .slice(0, TOP_TABLES_COUNT);
+      const now = new Date().toISOString();
+
       setAllTimeRevenue(total);
-      setDailyRevenue(
-        Object.entries(perDay)
-          .map(([date, omzet]) => ({ date, omzet }))
-          .sort((a, b) => (a.date < b.date ? 1 : -1))
-      );
-      setTopTables(
-        Object.entries(perTable)
-          .map(([tafelId, omzet]) => ({ tafelId, omzet }))
-          .sort((a, b) => b.omzet - a.omzet)
-          .slice(0, TOP_TABLES_COUNT)
-      );
+      setDailyRevenue(sortedDailyRevenue);
+      setTopTables(sortedTopTables);
+      setCalculatedAt(now);
+      saveCachedStats({
+        allTimeRevenue: total,
+        dailyRevenue: sortedDailyRevenue,
+        topTables: sortedTopTables,
+        calculatedAt: now,
+      });
     } catch (error) {
       console.error('Error calculating all-time revenue:', error);
       setError('Kon de totale omzet niet berekenen.');
@@ -174,6 +211,11 @@ const FinancialScreen = () => {
             {calculating && (
               <p className="progress-text-product">
                 {calcProgress.done} / {calcProgress.total} bestellingen verwerkt
+              </p>
+            )}
+            {!calculating && calculatedAt && (
+              <p className="progress-text-product">
+                Laatst berekend: {new Date(calculatedAt).toLocaleString('nl-BE', { timeZone: 'Europe/Brussels' })}
               </p>
             )}
           </div>
