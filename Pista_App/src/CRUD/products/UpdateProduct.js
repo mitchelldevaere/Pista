@@ -50,7 +50,7 @@ const UpdateProduct = () => {
       if (response.ok) {
         // Product was successfully updated
         // Navigate to a different route (e.g., a success page)
-        history.push("/GetProducts");
+        history.push("/products");
       } else {
         // Handle error response
         console.error("Failed to update product:", response.statusText);

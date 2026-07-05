@@ -35,7 +35,7 @@ const CreateProduct = () => {
       if (response.ok) {
         // Product was successfully created
         // Navigate to a different route (e.g., a success page)
-        history.push("/GetProducts");
+        history.push("/products");
       } else {
         // Handle error response
         console.error("Failed to create product:", response.statusText);

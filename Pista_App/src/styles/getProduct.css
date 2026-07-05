@@ -1,72 +1,151 @@
-/* Add this styling to your component or import it from an external stylesheet */
+/* getProduct.css */
 
 .container-product {
-    max-width: auto;
-  }
-  
+  max-width: 960px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  padding-bottom: 30px;
+}
+
 .h2-product {
-    color: #333;
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-  
+  color: var(--color-primary-dark);
+  margin: 18px 16px;
+}
+
+.h3-product {
+  color: var(--color-primary-dark);
+  margin: 24px 16px 10px;
+}
+
+.empty-product {
+  margin: 0 16px 16px;
+  color: var(--color-text-muted);
+}
+
+.stats-grid-product {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 0 16px 10px;
+}
+
+.stat-card-product {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value-product {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.stat-label-product {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.alltime-revenue-product {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 16px 16px;
+  flex-wrap: wrap;
+}
+
+.progress-text-product {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.table-search-form-product {
+  display: flex;
+  gap: 8px;
+  margin: 0 16px 16px;
+}
+
+.table-search-input-product {
+  flex: 1;
+  max-width: 320px;
+}
+
+.table-wrapper-product {
+  margin: 0 16px 16px;
+  overflow-x: auto;
+}
+
+.data-table-product {
+  font-size: 14px;
+}
+
+.data-table-product .button-product {
+  margin: 2px 4px;
+}
+
 .ul-product {
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
-  }
-  
+  list-style: none;
+  padding-left: 0;
+  margin: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .li-product {
-    border: 1px solid #ccc;
-    margin-bottom: 5px;
-    margin-top: 5px;
-    padding: 5px;
-    border-radius: 5px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
 .button-product {
-    margin-left: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-  }
+  margin-left: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
 
-  .p-product {
-    text-align: center;
-  }
-  
-  /* Style for the 'Create' button */
-  .create-button-product {
-    margin-bottom: 10px;
-    margin-left: 5px;
-    padding: 10px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .create-button-product:hover {
-    background-color: #45a049;
-  }
-  
-  /* Style for the navigation bar */
-  .navbar-product {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    border: 2px, solid, #333;
-  }
-  
-  /* Add more styles as needed */
-  
+.button-product:hover {
+  background-color: var(--color-primary-light);
+}
+
+.p-product {
+  text-align: left;
+  margin: 0;
+}
+
+.create-button-product {
+  margin: 0 16px 10px;
+  padding: 12px;
+  background-color: var(--color-accent-soft);
+  color: var(--color-primary-dark);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+.create-button-product:hover {
+  background-color: var(--color-accent);
+}

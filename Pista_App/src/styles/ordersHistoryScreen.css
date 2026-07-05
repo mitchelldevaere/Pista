@@ -1,0 +1,72 @@
+/* ordersHistoryScreen.css */
+
+.orders-history-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  padding-bottom: 30px;
+}
+
+.orders-history-title {
+  color: var(--color-primary-dark);
+  margin: 18px 16px;
+}
+
+.orders-history-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin: 0 16px 16px;
+}
+
+.orders-history-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  gap: 4px;
+}
+
+.orders-history-input {
+  min-width: 160px;
+}
+
+.orders-history-products-cell {
+  text-align: left;
+  font-size: 13px;
+}
+
+.orders-history-sortable-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.orders-history-sortable-header:hover {
+  text-decoration: underline;
+}
+
+.orders-history-tafel-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.orders-history-tafel-link:hover {
+  color: var(--color-primary-light);
+}
+
+.orders-history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}

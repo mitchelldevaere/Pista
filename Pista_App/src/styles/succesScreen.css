@@ -1,49 +1,84 @@
 /* succesScreenStyles.css */
 .container-succesScreen {
-    margin: 0 auto;
-  }
-  
-  .header-succes {
-    text-align: center;
-    margin-bottom: 20px;
-    color: white;
-    background-color: #0b5229;
-    padding: 8px;
-  }
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  padding-bottom: 30px;
+}
 
-  .content-body-succes {
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid #0b5229;
-    border-radius: 5px;
-  }
-  
-  .order-table-succes {
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 5px;
-  }
-  
-  .orderline-row-succes {
-    border: 1px solid #0b5229;
-    border-radius: 5px;
-    text-align: center;
-  }
-  
-  .back-button-succes {
-    background-color: #0b5229;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    margin-top: 5px;
-    width: 100%;
-  }
-  
-  .total-price-succes {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
+.header-succes {
+  text-align: center;
+  color: var(--color-text-on-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  padding: 22px 16px;
+  box-shadow: var(--shadow-md);
+}
+
+.header-succes h1 {
+  color: var(--color-accent-soft);
+  font-size: 24px;
+}
+
+.content-body-succes {
+  padding: 16px;
+  margin: 16px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.content-body-succes h2 {
+  font-size: 18px;
+  color: var(--color-primary-dark);
+}
+
+.order-table-succes {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orderline-row-succes {
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.order-table-succes thead tr {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+
+.order-table-succes th,
+.order-table-succes td {
+  padding: 9px 6px;
+}
+
+.back-button-succes {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  margin-top: 8px;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+}
+
+.back-button-succes:hover {
+  background-color: var(--color-primary-light);
+}
+
+.total-price-succes {
+  text-align: right;
+  margin: 14px 0;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--color-primary-dark);
+}

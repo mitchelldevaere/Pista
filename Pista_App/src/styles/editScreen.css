@@ -1,118 +1,131 @@
 /* EditScreen.css */
 
 .edit-container {
-    font-family: Arial, sans-serif;
-    margin: 0 auto;
-  }
-  
-  .edit-header {
-    justify-content: space-between;
-    align-items: center;
-    background-color: #0b5229;
-    padding: 10px;
-    width: 100%;
-    margin: 0;
-  }
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  padding-bottom: 30px;
+}
 
-  .edit-price {
-    text-align: center;
-  }
+.edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+}
 
-  .edit-orders {
-    border: 2px solid #0b5229;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
+.edit-price {
+  text-align: center;
+  margin: 18px 0 10px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
 
-  .edit-orders:last-child {
-    padding: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-  
-  .edit-header-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid white;
-    margin-bottom: 7px;
-    padding-bottom: 5px;
-  }
-  
-  .edit-title {
-    font-size: 24px;
-    color: #fff;
-    margin: 0;
-    flex: 1;
-  }
-  
-  .edit-back-button {
-    background-color: #fffd8d;
-    color: #0b5229;
-    border: none;
-    padding: 7px 10px;
-    cursor: pointer;
-    border-radius: 3px;
-    font-weight: bold;
-  }
-  
-  .edit-content {
-    padding-left: 10px;
-    padding-bottom: 10px;
-    padding-right: 10px;
-  }
-  
-  .edit-ordered-item {
-    padding: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-    border-bottom: 1px solid #0b5229;
-  }
-  
-  .edit-ordered-item ul {
-    padding-left: 0;
-    list-style: none;
-  }
-  
-  .edit-item-info {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-  }
-  
-  .edit-item-quantity {
-    margin-left: auto;
-  }
-  
-  .edit-quantity-button {
-    background-color: #0b5229;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 3px;
-    margin-left: 5px;
-  }
-  
-  .edit-delete-button {
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 3px;
-    margin-left: 5px;
-  }
-  
-  .edit-geef-door-button {
-    background-color: #0b5229;
-    color: #fffd8d;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    border-radius: 3px;
-    width: 100%;
-  }
-  
+.edit-orders {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin: 0 14px 14px;
+}
+
+.edit-title {
+  font-size: 21px;
+  color: var(--color-text-on-primary);
+  margin: 0;
+}
+
+.edit-back-button {
+  background-color: var(--color-accent-soft);
+  color: var(--color-primary-dark);
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.edit-back-button:hover {
+  background-color: var(--color-accent);
+}
+
+.edit-content {
+  padding: 0 14px 14px;
+}
+
+.edit-ordered-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.edit-ordered-item:last-child {
+  border-bottom: none;
+}
+
+.edit-item-info {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 15px;
+}
+
+.edit-item-quantity {
+  display: flex;
+  gap: 6px;
+}
+
+.edit-quantity-button {
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  padding: 7px 13px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+
+.edit-quantity-button:hover {
+  background-color: var(--color-primary-light);
+}
+
+.edit-delete-button {
+  background-color: var(--color-danger);
+  color: #fff;
+  border: none;
+  padding: 7px 13px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+.edit-delete-button:hover {
+  background-color: var(--color-danger-dark);
+}
+
+.edit-geef-door-button {
+  background-color: var(--color-accent-soft);
+  color: var(--color-primary-dark);
+  border: none;
+  padding: 14px 20px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 17px;
+  border-radius: var(--radius-md);
+  width: 100%;
+  box-shadow: var(--shadow-md);
+}
+
+.edit-geef-door-button:hover {
+  background-color: var(--color-accent);
+}

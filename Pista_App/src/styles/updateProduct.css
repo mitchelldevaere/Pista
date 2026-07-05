@@ -1,44 +1,56 @@
 /* UpdateProduct.css */
 
 .container-update {
-    max-width: auto;
-    margin: auto;
-  }
-  
-  .h2-update {
-    text-align: center;
-  }
-  
-  .form-update {
-    display: flex;
-    flex-direction: column;
-    margin: 10px;
-  }
-  
-  .label-update {
-    margin-bottom: 5px;
-  }
-  
-  .input-update, .textarea-update {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  .button-update {
-    padding: 10px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .button-update:hover {
-    background-color: #45a049;
-  }
-  
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.h2-update {
+  text-align: center;
+  color: var(--color-primary-dark);
+  margin: 20px 0;
+}
+
+.form-update {
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+}
+
+.label-update, .label-input {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.input-update, .textarea-update, .textearea-update {
+  width: 100%;
+  padding: 9px 10px;
+  margin-bottom: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+.button-update {
+  padding: 12px;
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  margin-top: 6px;
+  font-weight: 700;
+}
+
+.button-update:hover {
+  background-color: var(--color-primary-light);
+}

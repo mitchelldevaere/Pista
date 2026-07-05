@@ -1,32 +1,29 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "../styles/navBar.css";
 
 const NavBar = () => {
-  const navStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    backgroundColor: "#333",
-    padding: "10px",
-    color: "#fff",
-  };
-
-  const linkStyle = {
-    textDecoration: "none",
-    color: "#fff",
-    margin: "0 10px",
-  };
-
   return (
-    <nav style={navStyle}>
-      <ul style={{ listStyle: "none", display: "flex", margin: 0, padding: 0 }}>
+    <nav className="navbar">
+      <span className="navbar-brand">La Pista</span>
+      <ul className="navbar-links">
         <li>
-          <Link to="/" style={linkStyle}>Home</Link>
+          <Link to="/" className="navbar-link">Home</Link>
         </li>
         <li>
-          <Link to="/GetProducts" style={linkStyle}>Producten</Link>
+          <Link to="/GetProducts" className="navbar-link">Dashboard</Link>
         </li>
         <li>
-          <Link to="/CreateProduct" style={linkStyle}>Create</Link>
+          <Link to="/products" className="navbar-link">Producten</Link>
+        </li>
+        <li>
+          <Link to="/ordersHistory" className="navbar-link">Bestellingen</Link>
+        </li>
+        <li>
+          <Link to="/financial" className="navbar-link">Financieel</Link>
+        </li>
+        <li>
+          <Link to="/CreateProduct" className="navbar-link">Create</Link>
         </li>
       </ul>
     </nav>

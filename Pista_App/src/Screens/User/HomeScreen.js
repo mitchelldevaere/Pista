@@ -163,9 +163,9 @@ function HomeScreen() {
                   <td>{orderline.prijs * orderline.hoeveelheid}€</td>
                   <td>
                     {orderline.status === 1 ? (
-                      <p>klaar</p>
+                      <span className="status-pill ready">klaar</span>
                     ) : (
-                      <p>niet klaar</p>
+                      <span className="status-pill pending">niet klaar</span>
                     )}
                   </td>
                 </tr>

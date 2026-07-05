@@ -1,11 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import GetProducts from './CRUD/products/GetProducts'
+import ProductsScreen from './CRUD/products/ProductsScreen'
 import CreateProduct from "./CRUD/products/CreateProduct";
 import UpdateProduct from "./CRUD/products/UpdateProduct";
 import HomeScreen from "./Screens/User/HomeScreen";
 import OrderScreen from "./Screens/User/OrderScreen";
 import TafelDetailScreen from "./Screens/Dashboard/TafelDetailScreen"
+import OrdersHistoryScreen from "./Screens/Dashboard/OrdersHistoryScreen"
+import FinancialScreen from "./Screens/Dashboard/FinancialScreen"
 import SuccesScreen from "./Screens/User/SuccesScreen";
 import EditScreen from "./Screens/User/EditScreen";
 
@@ -24,11 +27,14 @@ function App () {
         <Route exact path="/" component={HomeScreen} />
         
         <Route path="/GetProducts" component={GetProducts} />
+        <Route path="/products" component={ProductsScreen} />
         <Route path="/CreateProduct" component={CreateProduct} />
         <Route path="/updateProduct/:productId" component={UpdateProduct} />
 
         <Route path="/order/:id" component={OrderScreen} />
         <Route path="/tafel/:id" component={TafelDetailScreen} />
+        <Route path="/ordersHistory" component={OrdersHistoryScreen} />
+        <Route path="/financial" component={FinancialScreen} />
 
         <Route path="/succes" component={SuccesScreen} />
         <Route path="/edit" component={EditScreen} />
