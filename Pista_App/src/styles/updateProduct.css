@@ -1,10 +1,10 @@
 /* UpdateProduct.css */
 
 .container-update {
-  max-width: 480px;
-  margin: 0 auto;
+  width: 100%;
   min-height: 100vh;
   background-color: var(--color-bg);
+  box-sizing: border-box;
 }
 
 .h2-update {
@@ -16,7 +16,8 @@
 .form-update {
   display: flex;
   flex-direction: column;
-  margin: 0 20px;
+  max-width: 480px;
+  margin: 0 auto;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
